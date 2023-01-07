@@ -133,7 +133,7 @@ public class Model {
 		return -1;
 	}
 
-	// Adds hero to database (returns id of new hero)
+	// Adds hero to database (returns id of new hero), -1 on err
 	public int addHero(Hero hero)
 	{
 
@@ -161,6 +161,7 @@ public class Model {
 			System.out.println(e);
 			System.exit(1);
 		}
+		return -1;
 	}
 
 	// Init conenction and connect to db
