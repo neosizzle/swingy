@@ -1,0 +1,10 @@
+swingy/model/Model.class
+swingy/enums/ArtifactType.class
+swingy/controller/Controller.class
+swingy/schema/Hero.class
+swingy/enums/ArtifactQuality.class
+swingy/schema/Enemy.class
+swingy/schema/Artifact.class
+swingy/schema/Game.class
+swingy/App.class
+swingy/enums/ClassName.class
