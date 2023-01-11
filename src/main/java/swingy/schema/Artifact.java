@@ -4,6 +4,7 @@ import swingy.enums.ArtifactQuality;
 import swingy.enums.ArtifactType;
 
 public class Artifact {
+	private int	id;
 	private String name;
 	private ArtifactQuality quality;
 	private ArtifactType type;
@@ -42,10 +43,17 @@ public class Artifact {
 	public void setOwnedBy(int ownedBy) {
 		this.ownedBy = ownedBy;
 	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	/**Constructor */
 	public Artifact(String nameString, ArtifactQuality artifactQuality, ArtifactType artifactType, int attr, boolean isEquipped, int ownedBy)
 	{
+		this.id = -1;
 		this.name = nameString;
 		this.quality = artifactQuality;
 		this.type = artifactType;

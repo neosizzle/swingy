@@ -1,7 +1,9 @@
 package swingy.model;
 
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import swingy.enums.ClassName;
 import swingy.schema.Hero;
 
 import java.sql.Connection;
@@ -177,6 +179,104 @@ public class Model {
 			System.out.println(e);
 			System.exit(1);
 		}
+	}
+
+	public Hero getHero(int heroId)
+	{
+		String query = "SELECT * FROM HEROES WHERE id = " + heroId;
+		
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+
+			// not found
+			if (!rs.next())
+				return null;
+			// get all the sutff
+			int	id = rs.getInt("id");
+			String name = rs.getString("name");
+			String _className = rs.getString("class");
+			int level = rs.getInt("level");
+			int exp = rs.getInt("exp");
+			int atk = rs.getInt("atk");
+			int def = rs.getInt("def");
+			int hp = rs.getInt("hp");
+			int maxExp = rs.getInt("maxExp");
+			int maxHp = rs.getInt("maxHp");
+
+			ClassName className;
+			if (_className.equals("JIMIN"))
+				className = ClassName.JIMIN;
+			else if (_className.equals("JUNGKOOK"))
+				className = ClassName.JUNGKOOK;
+			else if (_className.equals("VI"))
+				className = ClassName.VI;
+			else if (_className.equals("JHOPE"))
+				className = ClassName.JHOPE;
+			else if (_className.equals("TAEYUNG"))
+				className = ClassName.TAEYUNG;
+			else
+				className = ClassName.KIM_JUNG_UN;
+
+			// create new hero object
+			Hero newHero = new Hero(name, className, level, exp, maxExp, atk, def, hp, maxHp);
+			newHero.setId(id);
+			return newHero;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
+
+	public ArrayList<Hero> getAllHeros()
+	{
+		ArrayList<Hero> res = new ArrayList<Hero>();
+		String query = "SELECT * FROM HEROES";
+
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+
+			while (rs.next()) {
+				// get all the sutff
+				int	id = rs.getInt("id");
+				String name = rs.getString("name");
+				String _className = rs.getString("class");
+				int level = rs.getInt("level");
+				int exp = rs.getInt("exp");
+				int atk = rs.getInt("atk");
+				int def = rs.getInt("def");
+				int hp = rs.getInt("hp");
+				int maxExp = rs.getInt("maxExp");
+				int maxHp = rs.getInt("maxHp");
+
+				ClassName className;
+				if (_className.equals("JIMIN"))
+					className = ClassName.JIMIN;
+				else if (_className.equals("JUNGKOOK"))
+					className = ClassName.JUNGKOOK;
+				else if (_className.equals("VI"))
+					className = ClassName.VI;
+				else if (_className.equals("JHOPE"))
+					className = ClassName.JHOPE;
+				else if (_className.equals("TAEYUNG"))
+					className = ClassName.TAEYUNG;
+				else
+					className = ClassName.KIM_JUNG_UN;
+
+				// create new hero object
+				Hero newHero = new Hero(name, className, level, exp, maxExp, atk, def, hp, maxHp);
+				newHero.setId(id);
+
+				// append to res
+				res.add(newHero);
+			}
+		} catch (Exception e) {
+			System.out.print("Error getting heroes");
+			System.out.println(e);
+			System.exit(1);
+		}
+
+
+		return res;
 	}
 
 	protected void finalize()

@@ -1,6 +1,7 @@
 package swingy.schema;
 
 public class Enemy {
+	private	int	id;
 	private String name;
 	private int hp;
 	private int def;
@@ -66,10 +67,17 @@ public class Enemy {
 	public void setPosY(int posY) {
 		this.posY = posY;
 	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	/**Constructor */
 	public Enemy(String name, int hp, int def, int atk, int maxHp, int gameId, int posX, int posY, int level)
 	{
+		this.id = -1;
 		this.name = name;
 		this.hp = hp;
 		this.def = def;

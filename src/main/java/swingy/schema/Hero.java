@@ -12,6 +12,7 @@ public class Hero {
 	private int def;
 	private int hp;
 	private int maxHp;
+	private int id;
 
 	/** Getter and setter  */
 	public String getName() {
@@ -77,14 +78,37 @@ public class Hero {
 		return maxHp;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	/**constructor */
+	public Hero(String name, ClassName className, int level, int exp, int maxExp, int atk, int def, int hp, int maxHp)
+	{
+		this.id = -1;
+		this.name = name;
+		this.className = className;
+		this.level = level;
+		this.exp = exp;
+		this.maxExp = maxExp;
+		this.atk = atk;
+		this.def = def;
+		this.hp = hp;
+		this.maxExp = maxExp;
+	}
 
 	public Hero(String name, ClassName className)
 	{
+		this.id = -1;
 		this.name = name;
 		this.className = className;
 		this.exp = 0;
 		this.level = 0;
+		// todo, calculate maxexp
 
 		if (className == ClassName.JIMIN)
 		{

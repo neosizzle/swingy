@@ -1,6 +1,7 @@
 package swingy.schema;
 
 public class Game {
+	private	int	id;
 	private int heroId;
 	private int width;
 	private int height;
@@ -45,9 +46,16 @@ public class Game {
 	public void setPosCol(int posCol) {
 		this.posCol = posCol;
 	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public Game(int heroId, int width, int height, int posCol, int posRow, String explored)
 	{
+		this.id = -1;
 		this.heroId = heroId;
 		this.width = width;
 		this.height = height;
