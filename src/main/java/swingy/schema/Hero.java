@@ -1,8 +1,12 @@
 package swingy.schema;
 
-import swingy.enums.ClassName;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Hero {
+import swingy.enums.ClassName;
+import swingy.interfaces.Command;
+
+public class Hero extends Schema{
 	private String name;
 	private ClassName className;
 	private int	level;
@@ -13,7 +17,51 @@ public class Hero {
 	private int hp;
 	private int maxHp;
 	private int id;
+	// public Map<String, Command>fn_map;
 
+	// function mapping
+	private Map<String, Command> generateFnMap()
+	{
+		HashMap<String, Command> res = new HashMap<String, Command>();
+		
+		res.put("getName", new Command<String>() {
+			public String runCommand(){return getName();}
+		});
+		res.put("getClassName", new Command<ClassName>() {
+			public ClassName runCommand(){return getClassName();}
+		});
+		res.put("getLevel", new Command<Integer>() {
+			public Integer runCommand(){return getLevel();}
+		});
+		res.put("getExp", new Command<Integer>() {
+			public Integer runCommand(){return getExp();}
+		});
+		res.put("getAtk", new Command<Integer>() {
+			public Integer runCommand(){return getAtk();}
+		});
+		res.put("getDef", new Command<Integer>() {
+			public Integer runCommand(){return getDef();}
+		});
+		res.put("getHp", new Command<Integer>() {
+			public Integer runCommand(){return getHp();}
+		});
+		res.put("getMaxHp", new Command<Integer>() {
+			public Integer runCommand(){return getMaxHp();}
+		});
+		res.put("getId", new Command<Integer>() {
+			public Integer runCommand(){return getId();}
+		});
+		res.put("getMaxExp", new Command<Integer>() {
+			public Integer runCommand(){return getMaxExp();}
+		});
+		
+		return res;
+	}
+
+	public String toString() {
+		return "Sex";
+	}
+	
 	/** Getter and setter  */
 	public String getName() {
 		return name;
@@ -89,6 +137,7 @@ public class Hero {
 	/**constructor */
 	public Hero(String name, ClassName className, int level, int exp, int maxExp, int atk, int def, int hp, int maxHp)
 	{
+		super();
 		this.id = -1;
 		this.name = name;
 		this.className = className;
@@ -99,15 +148,18 @@ public class Hero {
 		this.def = def;
 		this.hp = hp;
 		this.maxExp = maxExp;
+		this.fn_map = generateFnMap();
 	}
 
 	public Hero(String name, ClassName className)
 	{
+		
 		this.id = -1;
 		this.name = name;
 		this.className = className;
 		this.exp = 0;
 		this.level = 0;
+		this.fn_map = generateFnMap();
 		// todo, calculate maxexp
 
 		if (className == ClassName.JIMIN)

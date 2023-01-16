@@ -35,6 +35,7 @@ public class GameController {
 		classMap.put("JHOPE", ClassName.JHOPE);
 		classMap.put("VI", ClassName.VI);
 		classMap.put("KIM_JUNG_UN", ClassName.KIM_JUNG_UN);
+		classMap.put("TAEYUNG", ClassName.TAEYUNG);
 
 		if (!classMap.keySet().contains(class_str))
 			return newHero;
