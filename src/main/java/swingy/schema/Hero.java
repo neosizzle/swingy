@@ -3,10 +3,13 @@ package swingy.schema;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.Size;
+
 import swingy.enums.ClassName;
 import swingy.interfaces.Command;
 
 public class Hero extends Schema{
+
 	private String name;
 	private ClassName className;
 	private int	level;

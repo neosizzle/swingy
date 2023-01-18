@@ -275,7 +275,6 @@ public class Model {
 			System.exit(1);
 		}
 
-
 		return res;
 	}
 
