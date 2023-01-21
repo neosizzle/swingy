@@ -3,6 +3,13 @@ package swingy.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import swingy.enums.ClassName;
 import swingy.model.Model;
@@ -10,6 +17,12 @@ import swingy.schema.Hero;
 
 public class GameController {
 	Model model;
+	private static Validator validator;
+
+	public static void setUpValidator() {
+	   ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+	   validator = factory.getValidator();
+   }
 
 	// gets all herores form db
 	public ArrayList<Hero> getHeroesList() {
@@ -38,14 +51,19 @@ public class GameController {
 		classMap.put("TAEYUNG", ClassName.TAEYUNG);
 
 		if (!classMap.keySet().contains(class_str))
-			return newHero;
+			throw new ConstraintViolationException("Invalid className", null);
+		
 		newHero = new Hero(name, classMap.get(class_str));
+
+		Set<ConstraintViolation<Hero>> constraintSet = validator.validate(newHero);
+		if (constraintSet.size() > 0) throw new ConstraintViolationException(constraintSet);
 		newHero.setId(model.addHero(newHero));
 		return newHero; 
 	}
 
 	public GameController(Model m)
 	{
+		setUpValidator();
 		this.model = m;
 	}
 }

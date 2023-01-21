@@ -1,5 +1,8 @@
 package swingy;
 
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -12,8 +15,14 @@ import swingy.view.GameView;
 
 public class App {
 
-   public static void main( String args[] ) {
+   private static Validator validator;
 
+   public static void setUpValidator() {
+      ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+      validator = factory.getValidator();
+  }
+
+   public static void main( String args[] ) {
       // check args 
       if (args.length != 1 || (!args[0].equals("console") && !args[0].equals("gui")))
       {
@@ -30,5 +39,8 @@ public class App {
       GameView view = new GameView(controller, args[0]);
 
       view.start();
+      // Hero hero = new Hero("a", ClassName.JHOPE);
+      // Set<ConstraintViolation<Hero>> set = validator.validate(hero);
+      // System.out.println(set.iterator().next().getMessage());
    }
 }

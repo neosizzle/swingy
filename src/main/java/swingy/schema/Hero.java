@@ -3,6 +3,7 @@ package swingy.schema;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import swingy.enums.ClassName;
@@ -10,17 +11,32 @@ import swingy.interfaces.Command;
 
 public class Hero extends Schema{
 
+	@Size(min = 3, max = 4)
 	private String name;
 	private ClassName className;
+	
+	@Min(1)
 	private int	level;
+	
+	@Min(0)
 	private int exp;
+
+	@Min(1000)
 	private int maxExp;
+
+	@Min(0)
 	private int atk;
+
+	@Min(0)
 	private int def;
+
+	@Min(1)
 	private int hp;
+
+	@Min(1)
 	private int maxHp;
+
 	private int id;
-	// public Map<String, Command>fn_map;
 
 	// function mapping
 	private Map<String, Command> generateFnMap()
@@ -161,9 +177,9 @@ public class Hero extends Schema{
 		this.name = name;
 		this.className = className;
 		this.exp = 0;
-		this.level = 0;
+		this.level = 1;
 		this.fn_map = generateFnMap();
-		// todo, calculate maxexp
+		this.maxExp = (int) (this.level * 1000 + Math.pow(this.level - 1, 2) * 450);
 
 		if (className == ClassName.JIMIN)
 		{

@@ -145,7 +145,6 @@ public class Model {
 			PreparedStatement stmt = this._connection.prepareStatement(query);
 			int id = _getMaxId("HEROES") + 1;
 
-			// TODO : Validate and sanitize data
 			stmt.setString(1, hero.getName());
 			stmt.setString(2, hero.getClassName().name());
 			stmt.setInt(3, hero.getLevel());
