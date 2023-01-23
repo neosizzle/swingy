@@ -1,5 +1,6 @@
 package swingy;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -8,8 +9,11 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import swingy.controller.GameController;
+import swingy.enums.ArtifactQuality;
+import swingy.enums.ArtifactType;
 import swingy.enums.ClassName;
 import swingy.model.Model;
+import swingy.schema.Artifact;
 import swingy.schema.Hero;
 import swingy.view.GameView;
 
@@ -23,24 +27,31 @@ public class App {
   }
 
    public static void main( String args[] ) {
-      // check args 
-      if (args.length != 1 || (!args[0].equals("console") && !args[0].equals("gui")))
-      {
-         System.out.println("Usage: java -jar target/swingy-1.0-SNAPSHOT.jar console | gui");
-         System.exit(1);
-      }
+      // // check args 
+      // if (args.length != 1 || (!args[0].equals("console") && !args[0].equals("gui")))
+      // {
+      //    System.out.println("Usage: java -jar target/swingy-1.0-SNAPSHOT.jar console | gui");
+      //    System.exit(1);
+      // }
 
       Model m = new Model();
       m.addHero(new Hero("init1", ClassName.JUNGKOOK));
-      m.addHero(new Hero("init2", ClassName.JIMIN));
-      m.addHero(new Hero("init3", ClassName.JHOPE));
+      // m.addHero(new Hero("init2", ClassName.JIMIN));
+      // m.addHero(new Hero("init3", ClassName.JHOPE));
 
-      GameController controller = new GameController(m);
-      GameView view = new GameView(controller, args[0]);
+      // GameController controller = new GameController(m);
+      // GameView view = new GameView(controller, args[0]);
 
-      view.start();
-      // Hero hero = new Hero("a", ClassName.JHOPE);
-      // Set<ConstraintViolation<Hero>> set = validator.validate(hero);
-      // System.out.println(set.iterator().next().getMessage());
+      // view.start();
+      Artifact a = new Artifact("artfactname", ArtifactQuality.HARD, ArtifactType.ARMOR, 69, true, 1);
+      int id = m.addArtifact(a);
+      m.addArtifact(a);
+      ArrayList<Artifact> list = m.getAllArtifactsByHeroId(1);
+      for (int i = 0; i < list.size(); i++) {
+         Artifact ar = list.get(i);
+         System.out.println(ar.getName());
+      }
+      m.unequipArtifactOnHero(id, 1);
+      // System.out.println(a.toString());
    }
 }

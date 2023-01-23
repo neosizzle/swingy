@@ -10,36 +10,35 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.text.JTextComponent;
-import javax.validation.ConstraintViolationException;
+
+import org.hibernate.validator.internal.util.TypeResolutionHelper;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import swingy.controller.GameController;
-import swingy.enums.ClassName;
 import swingy.schema.Hero;
-import swingy.schema.Schema;
 import swingy.view.charSelect.CharSelectATM;
+import swingy.view.consoleManual.Manual;
 
-// TODO FIX SC CLOSE
 public class GameView {
 
 	private boolean _isGui = false;
 	private GameController _gameController;
 	private Hero _currHero = null;
 	private TableUtils _tableUtils = new TableUtils();
+	private final Scanner sc = new Scanner(System.in);
+	private final Manual _man = new Manual();
 
 	public void charSelect()
 	{
 		// create frame for charselect
 		final JFrame f_charSelect= new JFrame();
 		final ArrayList<Hero> heroes = _gameController.getHeroesList();
+		
 		boolean isProcessing;
-
+		
 		isProcessing = true;
 		while (isProcessing) {
 			// console mode
@@ -47,8 +46,8 @@ public class GameView {
 			{
 				while (_currHero == null) {
 					// tell view to enable prompt to select or create
-					Scanner sc= new Scanner(System.in);
-					System.out.print("select/create >");  
+
+					_man.printHelpCharSelect();
 					String str= sc.nextLine();
 					
 					//reads string 
@@ -71,7 +70,13 @@ public class GameView {
 							// get input from view 
 							System.out.print(">");  
 							str = sc.nextLine();       //reads string
-							int id = Integer.parseInt(str);
+							int id = -1;
+
+							try {
+								id = Integer.parseInt(str);
+							} catch (Exception e) {
+								
+							}
 							selected = _gameController.handleSelect(id);
 							if (selected == null)
 								System.out.println("Invalid");
@@ -97,14 +102,12 @@ public class GameView {
 							try {
 								selected = _gameController.handleCreate(name_str, class_str);
 							} catch (Exception e) {
-								// sc.close();
 								System.err.println(e.getMessage());
 							}
 							if (selected == null)
 								System.err.println("Invalid hero");
 							else
 							{
-								// sc.close();
 								isProcessing = false;
 								_currHero = selected;
 							}
@@ -112,7 +115,6 @@ public class GameView {
 					}
 					else if (str.equals("switch"))
 					{
-						// sc.close();
 						this._isGui = true;
 						break;
 					}
@@ -242,13 +244,52 @@ public class GameView {
 		
 		// destroy jframe
 		f_charSelect.dispose();
+	
+	}
+
+	private void gameStart()
+	{
+		boolean isRunning;
+
+		isRunning = true;
+		if (!this._isGui)
+			_man.printHelpCharSelect();
+		while (isRunning) {
+			// console game
+			if (!this._isGui)
+			{
+				// get input
+				System.out.print(">");
+				String line = sc.nextLine();
+				
+				// run insstructions based on line
+				if (line.startsWith("help"))
+					_man.printHelpMain();
+				else if (line.startsWith("artifacts list"))
+				{
+					// get all artifacts with currhero id from controller
+
+					// display the artifacts in the list
+				}
+			}
+			// gui game
+			else
+			{
+
+			}
+		}
+
+		// close scanner
+		// sc.close();
 	}
 
 	public void start()
 	{
 		this.charSelect();
-		System.out.print("selected hero: " + _currHero.getId() + ", " + _currHero.getName());
+		System.out.println("selected hero: " + _currHero.getId() + ", " + _currHero.getName());
+		this.gameStart();
 
+		sc.close();
 	}
 
 	public GameView(GameController controller, String mode)

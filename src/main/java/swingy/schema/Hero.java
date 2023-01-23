@@ -11,7 +11,6 @@ import swingy.interfaces.Command;
 
 public class Hero extends Schema{
 
-	@Size(min = 3, max = 4)
 	private String name;
 	private ClassName className;
 	
@@ -78,7 +77,7 @@ public class Hero extends Schema{
 	}
 
 	public String toString() {
-		return "Sex";
+		return  this.getLevel() + ". " + this.getName();
 	}
 	
 	/** Getter and setter  */

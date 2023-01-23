@@ -29,6 +29,8 @@ public class GameController {
 		return model.getAllHeros();
 	}
 
+	
+
 	// handles hero selection action
 	public Hero handleSelect(int id){
 		Hero selected;
