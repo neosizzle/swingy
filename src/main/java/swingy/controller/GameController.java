@@ -3,6 +3,7 @@ package swingy.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -14,6 +15,8 @@ import javax.validation.ValidatorFactory;
 import swingy.enums.ClassName;
 import swingy.model.Model;
 import swingy.schema.Artifact;
+import swingy.schema.Enemy;
+import swingy.schema.Game;
 import swingy.schema.Hero;
 
 public class GameController {
@@ -44,11 +47,53 @@ public class GameController {
 		model.equipArtifactOnHero(artifactId, hero);
 	}
 
+	// handles unequipping artifact on hero
 	public void unequipArtifactOnHero(int artifactId, Hero hero) throws Exception
 	{
 		model.unequipArtifactOnHero(artifactId, hero);
 	}
 
+	// get enemies for game or add enemies
+	public ArrayList<Enemy> getOrAddEnemies(Game game)
+	{
+		ArrayList<Enemy> res = new ArrayList<Enemy>();
+		res = model.getEnemiesFromGameId(game.getId());
+		if (res.size() == 0 && game.getHeight() != 10) // all elemies slayed
+			return res;
+		else if (res.size() == 0)
+		{
+			for (int index = 0; index < 40; index++) {
+				Random rand = new Random();
+				int x = rand.nextInt((40 - 0) + 1);
+				int y = rand.nextInt((40 - 0) + 1);
+
+				Enemy newEnemy = new Enemy("someenemy", 5, 5, 5, 10, game.getId(),x, y, 1);
+
+				// check if position is occupied
+				if (model.getEnemiesFromGameIdAndPos(game.getId(), x, y).size() > 0)
+					continue;
+
+				int id = model.addEnemy(newEnemy);
+
+				newEnemy.setId(id);
+				res.add(newEnemy);
+
+			}
+		}
+
+		return res;
+	}
+
+	// get game or generate game
+	public Game getOrAddGame(int heroId)
+	{
+		Game res;
+
+		res = model.getGameByHeroId(heroId);
+		if (res == null)
+			res = model.generateNewGame(heroId);
+		return res;
+	}
 
 	// handles hero selection action
 	public Hero handleSelect(int id){

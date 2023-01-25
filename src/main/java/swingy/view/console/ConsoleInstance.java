@@ -6,6 +6,8 @@ import java.util.Scanner;
 import swingy.controller.GameController;
 import swingy.interfaces.Command;
 import swingy.schema.Artifact;
+import swingy.schema.Enemy;
+import swingy.schema.Game;
 import swingy.schema.Hero;
 import swingy.view.GameState;
 import swingy.view.console.consoleManual.Manual;
@@ -110,10 +112,19 @@ public class ConsoleInstance {
 		}
 	}
 
+	public void test()
+	{
+		ArrayList<Enemy> enemies = _gamestateRef.getEnemies();
+		for (Enemy enemy : enemies) {
+			System.out.println(enemy.getId());
+		}
+	}
+
 	public void artifactEquipId(int artifactId)
 	{
 		try {
 			_gameControllerRef.equipArtifactOnHero(artifactId, _gamestateRef.getCurrHero());
+			System.out.println("Artifact " + artifactId + " equipped.");
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -124,6 +135,7 @@ public class ConsoleInstance {
 	{
 		try {
 			_gameControllerRef.unequipArtifactOnHero(artifactId, _gamestateRef.getCurrHero());
+			System.out.println("Artifact " + artifactId + " unequipped.");
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}

@@ -1,6 +1,6 @@
 package swingy.schema;
 
-public class Game {
+public class Game extends Schema{
 	private	int	id;
 	private int heroId;
 	private int width;
@@ -8,6 +8,11 @@ public class Game {
 	private int posRow;
 	private int posCol;
 	private String explored;
+
+	public String toString()
+	{
+		return String.valueOf(id);
+	}
 
 	/**Getters and setters */
 	public int getHeroId() {

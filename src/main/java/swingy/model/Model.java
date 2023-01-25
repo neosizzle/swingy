@@ -7,6 +7,7 @@ import swingy.enums.ArtifactQuality;
 import swingy.enums.ArtifactType;
 import swingy.enums.ClassName;
 import swingy.schema.Artifact;
+import swingy.schema.Enemy;
 import swingy.schema.Game;
 import swingy.schema.Hero;
 
@@ -360,6 +361,122 @@ public class Model {
 		}
 		return -1;
 	}
+
+	// generate new game and add enemies
+	public Game generateNewGame(int heroId)
+	{
+		Game res = new Game(heroId, 10, 10, 20, 20, "(20,20)");
+		int id = addGame(res);
+
+		// add enemies
+
+		res.setId(id);
+		return res;
+	}
+
+	/**
+	 * ENEMIES
+	 */
+
+	// get enemy object from rs
+	public Enemy getEnemyFromRs(ResultSet rs)
+	{
+		Enemy res;
+		res = null;
+
+		try {
+			int id = rs.getInt("id");
+			String name = rs.getString("name");
+			int posX = rs.getInt("posX");
+			int posY = rs.getInt("posY");
+			int hp = rs.getInt("hp");
+			int def = rs.getInt("def");
+			int maxhp = rs.getInt("maxhp");
+			int atk = rs.getInt("atk");
+			int gameId = rs.getInt("gameId");
+			int level = rs.getInt("level");
+
+			res = new Enemy(name, hp, def, atk, maxhp, gameId, posX, posY, level);
+			res.setId(id);
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return res;
+	}
+
+	// add enemy to db
+	public int addEnemy(Enemy enemy)
+	{
+		String query = "INSERT INTO ENEMIES (id, name, posX, posY, hp, def, maxhp, atk, gameId, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		try {
+			PreparedStatement stmt = this._connection.prepareStatement(query);
+			int id = _getMaxId("ENEMIES") + 1;
+
+
+			stmt.setInt(1, id);
+			stmt.setString(2, enemy.getName());
+			stmt.setInt(3, enemy.getPosX());
+			stmt.setInt(4, enemy.getPosY());
+			stmt.setInt(5, enemy.getHp());
+			stmt.setInt(6, enemy.getDef());
+			stmt.setInt(7, enemy.getMaxHp());
+			stmt.setInt(8, enemy.getAtk());
+			stmt.setInt(9, enemy.getGameId());
+			stmt.setInt(10, enemy.getLevel());
+
+			stmt.executeUpdate();
+			return id;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return -1;
+	}
+
+	// get enemies from gameid and position
+	public ArrayList<Enemy> getEnemiesFromGameIdAndPos(int gameId, int posX, int posY)
+	{
+		ArrayList<Enemy> res = new ArrayList<Enemy>();
+		String query = "SELECT * FROM ENEMIES WHERE gameId = " + gameId + " AND posX = " + posX + " AND posY = " + posY;
+
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+
+			while (rs.next()) {
+				res.add(getEnemyFromRs(rs));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return res;
+	}
+
+	// get enemies from gameid
+	public ArrayList<Enemy> getEnemiesFromGameId(int gameId)
+	{
+		ArrayList<Enemy> res = new ArrayList<Enemy>();
+		String query = "SELECT * FROM ENEMIES WHERE gameId = " + gameId;
+
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+
+			while (rs.next()) {
+				res.add(getEnemyFromRs(rs));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return res;
+	}
+
 
 	/**
 	 * ARTIFACT

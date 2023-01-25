@@ -1,6 +1,6 @@
 package swingy.schema;
 
-public class Enemy {
+public class Enemy extends Schema {
 	private	int	id;
 	private String name;
 	private int hp;
@@ -11,6 +11,11 @@ public class Enemy {
 	private int posX;
 	private int posY;
 	private int level;
+
+	public String toString()
+	{
+		return "enemy " + name;
+	}
 
 	/**Getters and setters */
 	public String getName() {

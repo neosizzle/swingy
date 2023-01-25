@@ -11,6 +11,7 @@ import swingy.view.gui.GuiInstance;
 
 public class GameView {
 
+	private GameController _controller;
 	private boolean _isGui = false;
 	private GameState _gameState;
 	private ConsoleInstance _consoleInstance;
@@ -77,6 +78,7 @@ public class GameView {
 				String line = sc.nextLine();
 				
 				// run insstructions based on line
+				_consoleInstance.test();
 				if (line.startsWith("help"))
 					_consoleInstance.printHelpMain();
 				else if (line.equals("stat"))
@@ -112,6 +114,12 @@ public class GameView {
 	{
 		this.charSelect();
 		System.out.println("selected hero: " + _gameState.getCurrHero().getId() + ", " + _gameState.getCurrHero().getName());
+		// generate or get map
+		this._gameState.setCurrGame(_controller.getOrAddGame(_gameState.getCurrHero().getId()));
+
+		// generate or add enemies
+		this._gameState.setEnemies(this._controller.getOrAddEnemies(_gameState.getCurrGame()));
+
 		this.gameStart();
 
 		sc.close();
@@ -119,6 +127,7 @@ public class GameView {
 
 	public GameView(GameController controller, String mode)
 	{
+		this._controller = controller;
 		this._isGui = mode.equals("gui");
 		this._gameState = new GameState();
 		this._consoleInstance = new ConsoleInstance(_guiSwitch, controller, this._gameState);

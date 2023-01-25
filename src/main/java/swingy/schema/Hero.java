@@ -3,8 +3,8 @@ package swingy.schema;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 
 import swingy.enums.ClassName;
 import swingy.interfaces.Command;
@@ -15,6 +15,7 @@ public class Hero extends Schema{
 	private ClassName className;
 	
 	@Min(1)
+	@Max(7)
 	private int	level;
 	
 	@Min(0)
