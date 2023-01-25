@@ -13,6 +13,7 @@ import javax.validation.ValidatorFactory;
 
 import swingy.enums.ClassName;
 import swingy.model.Model;
+import swingy.schema.Artifact;
 import swingy.schema.Hero;
 
 public class GameController {
@@ -30,6 +31,24 @@ public class GameController {
 	}
 
 	
+	// handles getting artifacts
+	public ArrayList<Artifact> getArtifactsByHero(int heroId) 
+	{
+		ArrayList<Artifact> res = model.getAllArtifactsByHeroId(heroId);
+		return res;
+	}
+
+	// handles equipping artifact on hero
+	public void equipArtifactOnHero(int artifactId, Hero hero) throws Exception
+	{
+		model.equipArtifactOnHero(artifactId, hero);
+	}
+
+	public void unequipArtifactOnHero(int artifactId, Hero hero) throws Exception
+	{
+		model.unequipArtifactOnHero(artifactId, hero);
+	}
+
 
 	// handles hero selection action
 	public Hero handleSelect(int id){

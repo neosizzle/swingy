@@ -1,235 +1,48 @@
 package swingy.view;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-
-import org.hibernate.validator.internal.util.TypeResolutionHelper;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import swingy.controller.GameController;
+import swingy.interfaces.Command;
 import swingy.schema.Hero;
-import swingy.view.charSelect.CharSelectATM;
-import swingy.view.consoleManual.Manual;
+import swingy.view.console.ConsoleInstance;
+import swingy.view.gui.GuiInstance;
 
 public class GameView {
 
 	private boolean _isGui = false;
-	private GameController _gameController;
-	private Hero _currHero = null;
-	private TableUtils _tableUtils = new TableUtils();
+	private GameState _gameState;
+	private ConsoleInstance _consoleInstance;
+	private GuiInstance _guiInstance;
 	private final Scanner sc = new Scanner(System.in);
-	private final Manual _man = new Manual();
+	private final Command<Number> _guiSwitch = new Command<Number>() {
+		public Number runCommand(){
+			_isGui = !_isGui;
+			return 0;
+		}
+	};
 
 	public void charSelect()
 	{
+		
 		// create frame for charselect
 		final JFrame f_charSelect= new JFrame();
-		final ArrayList<Hero> heroes = _gameController.getHeroesList();
 		
-		boolean isProcessing;
-		
+		Boolean isProcessing;
 		isProcessing = true;
+
 		while (isProcessing) {
 			// console mode
 			if (!_isGui)
-			{
-				while (_currHero == null) {
-					// tell view to enable prompt to select or create
-
-					_man.printHelpCharSelect();
-					String str= sc.nextLine();
-					
-					//reads string 
-					if (str.equals("select"))
-					{
-						Hero selected = null;
-						String []columns = {"getId"};
-
-						Object[][] heroes_arr  = _tableUtils.ArrayListToObjRows(heroes , columns);
-
-						for (Object[] row : heroes_arr) {
-							for (Object col : row) {
-								System.out.println(col);
-							}
-						}
-
-
-						while (selected == null) {
-
-							// get input from view 
-							System.out.print(">");  
-							str = sc.nextLine();       //reads string
-							int id = -1;
-
-							try {
-								id = Integer.parseInt(str);
-							} catch (Exception e) {
-								
-							}
-							selected = _gameController.handleSelect(id);
-							if (selected == null)
-								System.out.println("Invalid");
-							else
-							{
-								isProcessing = false;
-								_currHero = selected;
-							}
-						}
-					}
-					else if (str.equals("create"))
-					{
-						Hero selected = null;
-						while (selected == null) {
-
-							// tell view to input name and class
-							System.out.print("name >");  
-							String name_str= sc.nextLine(); 
-
-							System.out.print("class (JIMIN/ JUNGKOOK/ VI/ JHOPE/ TAEYUNG/ KIM_JUNG_UN) >");  
-							String class_str= sc.nextLine();
-
-							try {
-								selected = _gameController.handleCreate(name_str, class_str);
-							} catch (Exception e) {
-								System.err.println(e.getMessage());
-							}
-							if (selected == null)
-								System.err.println("Invalid hero");
-							else
-							{
-								isProcessing = false;
-								_currHero = selected;
-							}
-						}
-					}
-					else if (str.equals("switch"))
-					{
-						this._isGui = true;
-						break;
-					}
-				}
-			}
+				isProcessing = _consoleInstance.charSelect();
 			// gui mode
 			else
 			{
-				// create jframe table
-				final String[] colNames = {"id", "Name"};
-				final String[] colFunctions = {"getId", "getName"};
-				final Object[][] heroes_arr  = _tableUtils.ArrayListToObjRows(heroes , colFunctions);
-				final CharSelectATM atm = new CharSelectATM(colNames, heroes_arr);
-				final JTable table = new JTable(atm);
-				final JScrollPane scrollPane = new JScrollPane(table);
-
-				scrollPane.setBounds(50, 50, 600, 500);
-				table.setFillsViewportHeight(true);
-				table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-				
-				// create select button
-				final JButton selectButton=new JButton("Select");
-				selectButton.setBounds(50, 550, 100, 40); 
-				
-				final JLabel selectErrMsg = new JLabel("");
-				selectErrMsg.setBounds(50, 605, 600, 50);
-				selectErrMsg.setVisible(false);
-
-				selectButton.addActionListener(new ActionListener(){  
-					public void actionPerformed(ActionEvent e){  
-								final int selectedRowNum = table.getSelectedRow();
-
-								if (selectedRowNum == - 1)
-								{
-									selectErrMsg.setVisible(true);
-									selectErrMsg.setText("Please select a hero.");
-									return;
-								}
-								_currHero = heroes.get(selectedRowNum);
-								return ;
-							}  
-						});
-
-				f_charSelect.add(selectErrMsg);
-				f_charSelect.add(selectButton);
-				f_charSelect.add(scrollPane); 
-
-				// create hero creation form
-				final JLabel nameLabel = new JLabel("Name:");
-				nameLabel.setBounds(700, 50, 50, 50);
-
-				final JTextField nameInput = new JTextField("sexmaster1234");
-				nameInput.setBounds(750, 50, 300, 50);
-
-				f_charSelect.add(nameInput);
-				f_charSelect.add(nameLabel);
-
-				final JLabel classLabel = new JLabel("Class:");
-				classLabel.setBounds(700, 100, 50, 50);
-				final String[] classes = {
-					"JHOPE",
-					"JIMIN",
-					"JUNGKOOK",
-					"VI",
-					"TAEYUNG",
-					"KIM_JUNG_UN"
-				};
-				final JComboBox<String> classList = new JComboBox<String>(classes);
-				classList.setBounds(750, 100, 300, 50);
-
-				f_charSelect.add(classList);
-				f_charSelect.add(classLabel);
-
-				final JButton createButton=new JButton("Create new");
-				createButton.setBounds(750, 150, 150, 40);
-
-				final JLabel createErrMsg = new JLabel("");
-				createErrMsg.setBounds(750, 200, 300, 50);
-				createErrMsg.setVisible(false);
-
-				createButton.addActionListener(new ActionListener(){  
-					public void actionPerformed(ActionEvent e){  
-								try {
-									Hero created = _gameController.handleCreate(nameInput.getText(), classList.getSelectedItem().toString());
-									if (created == null)
-										throw new Exception("Invalid cretion");
-									_currHero = created;
-								} catch (Exception err) {
-									createErrMsg.setVisible(true);
-									createErrMsg.setText(err.getMessage());
-									return;
-								}
-							}  
-						});
-
-				f_charSelect.add(createErrMsg);
-				f_charSelect.add(createButton);
-
-				final JButton switchButton=new JButton("Switch to console");
-				switchButton.setBounds(750, 350, 350, 40);
-				switchButton.addActionListener(new ActionListener(){  
-					public void actionPerformed(ActionEvent e){  
-								_isGui = false;
-								f_charSelect.dispose();
-							}  
-						});
-				f_charSelect.add(switchButton);
-	
-				f_charSelect.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-				f_charSelect.setSize(1360,768);  
-				f_charSelect.setLayout(null);//using no layout managers  
-				f_charSelect.setVisible(true);//making the frame visible
+				_guiInstance.charSelect(f_charSelect);
 
 				// wait for hero to get selected (thread safe??)
-				while (_currHero == null) {
+				while (_gameState.getCurrHero() == null) {
 					try {
 						if (_isGui == true)
 							Thread.sleep(10);
@@ -237,23 +50,24 @@ public class GameView {
 					} catch (Exception e) {
 					}
 				}
-				if (_currHero != null) 
+				if (_gameState.getCurrHero() != null) 
 					isProcessing = false;
 			}
 		}
 		
 		// destroy jframe
 		f_charSelect.dispose();
-	
+
 	}
 
 	private void gameStart()
 	{
+		
 		boolean isRunning;
 
 		isRunning = true;
 		if (!this._isGui)
-			_man.printHelpCharSelect();
+			_consoleInstance.printHelpMain();
 		while (isRunning) {
 			// console game
 			if (!this._isGui)
@@ -264,18 +78,29 @@ public class GameView {
 				
 				// run insstructions based on line
 				if (line.startsWith("help"))
-					_man.printHelpMain();
-				else if (line.startsWith("artifacts list"))
-				{
-					// get all artifacts with currhero id from controller
-
-					// display the artifacts in the list
-				}
+					_consoleInstance.printHelpMain();
+				else if (line.equals("stat"))
+					_consoleInstance.displayStats();
+				else if (line.startsWith("artifacts list") || line.startsWith("a l"))
+					_consoleInstance.artifactList(_gameState.getCurrHero().getId());
+				else if (line.startsWith("artifacts equip ") || line.startsWith("a e "))
+					_consoleInstance.artifactEquipId(Integer.parseInt(line.split(" ")[2]));
+				else if (line.startsWith("artifacts unequip ") || line.startsWith("a u "))
+					_consoleInstance.artifactUnequipId(Integer.parseInt(line.split(" ")[2]));
+				else if (line.equals("exit"))
+					System.exit(0);
 			}
 			// gui game
 			else
 			{
-
+				try {
+					if (_isGui == true)
+					{
+						Thread.sleep(10);
+						System.out.println("GameView.gameStart() GUI");
+					}
+				} catch (Exception e) {
+				}
 			}
 		}
 
@@ -286,7 +111,7 @@ public class GameView {
 	public void start()
 	{
 		this.charSelect();
-		System.out.println("selected hero: " + _currHero.getId() + ", " + _currHero.getName());
+		System.out.println("selected hero: " + _gameState.getCurrHero().getId() + ", " + _gameState.getCurrHero().getName());
 		this.gameStart();
 
 		sc.close();
@@ -294,8 +119,10 @@ public class GameView {
 
 	public GameView(GameController controller, String mode)
 	{
-		this._gameController = controller;
 		this._isGui = mode.equals("gui");
+		this._gameState = new GameState();
+		this._consoleInstance = new ConsoleInstance(_guiSwitch, controller, this._gameState);
+		this._guiInstance = new GuiInstance(_guiSwitch, controller, this._gameState);
 
 		// initialize window stuff here?
 	}

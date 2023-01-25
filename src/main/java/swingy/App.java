@@ -27,31 +27,28 @@ public class App {
   }
 
    public static void main( String args[] ) {
-      // // check args 
-      // if (args.length != 1 || (!args[0].equals("console") && !args[0].equals("gui")))
-      // {
-      //    System.out.println("Usage: java -jar target/swingy-1.0-SNAPSHOT.jar console | gui");
-      //    System.exit(1);
-      // }
+      // check args 
+      if (args.length != 1 || (!args[0].equals("console") && !args[0].equals("gui")))
+      {
+         System.out.println("Usage: java -jar target/swingy-1.0-SNAPSHOT.jar console | gui");
+         System.exit(1);
+      }
+
+      Artifact a = new Artifact("artfactname", ArtifactQuality.HARD, ArtifactType.ARMOR, 69, false, 1);
+      Artifact a2 = new Artifact("artfactname1", ArtifactQuality.HARD, ArtifactType.ARMOR, 69, false, 1);
 
       Model m = new Model();
-      m.addHero(new Hero("init1", ClassName.JUNGKOOK));
-      // m.addHero(new Hero("init2", ClassName.JIMIN));
-      // m.addHero(new Hero("init3", ClassName.JHOPE));
+      Hero newHero = new Hero("init1", ClassName.JUNGKOOK);
+      newHero.setId(m.addHero(newHero));
+      m.addHero(new Hero("init2", ClassName.JIMIN));
+      m.addHero(new Hero("init3", ClassName.JHOPE));
+      int aid = m.addArtifact(a);
+      int aid2 = m.addArtifact(a2);
 
-      // GameController controller = new GameController(m);
-      // GameView view = new GameView(controller, args[0]);
+      GameController controller = new GameController(m);
+      GameView view = new GameView(controller, args[0]);
 
-      // view.start();
-      Artifact a = new Artifact("artfactname", ArtifactQuality.HARD, ArtifactType.ARMOR, 69, true, 1);
-      int id = m.addArtifact(a);
-      m.addArtifact(a);
-      ArrayList<Artifact> list = m.getAllArtifactsByHeroId(1);
-      for (int i = 0; i < list.size(); i++) {
-         Artifact ar = list.get(i);
-         System.out.println(ar.getName());
-      }
-      m.unequipArtifactOnHero(id, 1);
-      // System.out.println(a.toString());
+      view.start();
+      
    }
 }

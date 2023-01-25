@@ -1,4 +1,4 @@
-package swingy.view;
+package swingy.view.gui;
 
 import java.util.ArrayList;
 import java.util.Map;

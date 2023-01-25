@@ -7,6 +7,7 @@ import swingy.enums.ArtifactQuality;
 import swingy.enums.ArtifactType;
 import swingy.enums.ClassName;
 import swingy.schema.Artifact;
+import swingy.schema.Game;
 import swingy.schema.Hero;
 
 import java.sql.Connection;
@@ -16,8 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Model {
-	final private int STR_LIMIT = 50;
-
 	private Connection _connection;
 	private Statement _statement;
 	
@@ -169,7 +168,7 @@ public class Model {
 			stmt.executeUpdate();
 			return id;
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			System.exit(1);
 		}
 		return -1;
@@ -288,6 +287,81 @@ public class Model {
 	}
 
 	/**
+	 * GAME
+	 */
+
+	// transforms rs into game object
+	private Game _getGameFromRs(ResultSet rs)
+	{
+		Game res;
+
+		res = null;
+		try {
+			int id = rs.getInt("id");
+			int posX = rs.getInt("posX");
+			int posY = rs.getInt("posY");
+			int width = rs.getInt("width");
+			int height = rs.getInt("height");
+			int heroId = rs.getInt("heroId");
+			String explored = rs.getString("explored");
+
+			res = new Game(heroId, width, height, posX, posY, explored);
+			res.setId(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return res;
+	}
+
+	// gets game from heroid
+	public Game getGameByHeroId(int heroId)
+	{
+		String query = "SELECT * FROM GAMES WHERE heroId = " + heroId;
+		Game res;
+
+		res = null;
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+			if (!rs.next())
+				return null;
+			res = _getGameFromRs(rs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return res;
+	}
+
+	// add game to db
+	public int addGame(Game game)
+	{
+		String query = "INSERT INTO GAMES (id, explored, posX, posY, width, height, heroId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+		try {
+			PreparedStatement stmt = this._connection.prepareStatement(query);
+			int id = _getMaxId("GAMES") + 1;
+
+
+			stmt.setInt(1, id);
+			stmt.setString(2, game.getExplored());
+			stmt.setInt(3, game.getPosCol());
+			stmt.setInt(4, game.getPosRow());
+			stmt.setInt(5, game.getWidth());
+			stmt.setInt(6, game.getHeight());
+			stmt.setInt(7, game.getHeroId());
+
+			stmt.executeUpdate();
+			return id;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return -1;
+	}
+
+	/**
 	 * ARTIFACT
 	 */
 	// adds an artifact into the database
@@ -384,11 +458,10 @@ public class Model {
 		return res;
 	}
 
-	// removes artifact attribues from hero
-	private void _removeArtifactAttribsFromHero(Artifact artifact, int heroId)
+	private void _changeArtifactAttribsFromHero(Artifact artifact, Hero hero, boolean isAdd)
 	{
 		String variable = "";
-		int attr = artifact.getAttr();
+		int attr = artifact.getAttr() * (isAdd ? 1 : -1);
 
 		// weapon decreaase attack
 		if (artifact.getType() == ArtifactType.WEAPON)
@@ -402,21 +475,26 @@ public class Model {
 		if (artifact.getType() == ArtifactType.HELM)
 			variable = "maxHp";
 
-		String query = "UPDATE HEROES SET " + variable + " = " + variable + " - " + attr + " WHERE id = " + artifact.getId();
+		String query = "UPDATE HEROES SET " + variable + " = " + variable + " + " + attr + " WHERE id = " + hero.getId();
 		try {
 			this._statement.executeUpdate(query);
+			if (variable.equals("atk"))
+				hero.setAtk(hero.getAtk() + attr);
+			if (variable.equals("def"))
+				hero.setDef(hero.getDef() + attr);
+			if (variable.equals("maxHp"))
+				hero.setMaxHp(hero.getMaxHp() + attr);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
 
-	// TODO test this
 	// unequips artifact on hero
-	public void unequipArtifactOnHero(int artifactId, int heroId) {
+	public void unequipArtifactOnHero(int artifactId, Hero hero) throws Exception {
 		// check if artifact is owned by heroid and is equipped
 		String checkQuery = "SELECT * FROM ARTIFACTS WHERE id = " + artifactId  +
-							" AND ownedBy = " + heroId + 
+							" AND ownedBy = " + hero.getId() + 
 							" AND isEquipped = true";
 
 		String updateArtifactQuery = "UPDATE ARTIFACTS SET isEquipped = false "  +
@@ -426,10 +504,7 @@ public class Model {
 		try {
 			ResultSet checkRs = this._statement.executeQuery(checkQuery);
 			if (!checkRs.next())
-			{
-				System.out.println("Artifact not equipped on user");
-				return ;
-			}
+				throw new Exception("Artifact not found");
 
 			// get artifact object
 			Artifact artifact = _getArtifactFromRs(checkRs);
@@ -438,15 +513,53 @@ public class Model {
 			this._statement.executeUpdate(updateArtifactQuery);
 
 			// undo artifact upgrades to user
-			_removeArtifactAttribsFromHero(artifact, heroId);
+			_changeArtifactAttribsFromHero(artifact, hero, false);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
+			throw new Exception(e);
 		}
 		
 	}
 
+	public void equipArtifactOnHero(int artifactId, Hero hero) throws Exception
+	{
+		String query = "SELECT * FROM ARTIFACTS WHERE id = " + artifactId ;
+		String updateArtifactQuery = "UPDATE ARTIFACTS SET isEquipped = true "  +
+									" WHERE id = " + artifactId;
+
+		try {
+			// get artifact object
+			ResultSet rs = this._statement.executeQuery(query);
+
+			if (!rs.next())
+				throw new Exception("Artifact not found");
+		
+			Artifact artifact = _getArtifactFromRs(rs);
+
+			// check that artifact is owned by hero and not equipped
+			if (artifact.getIsEquipped() || (artifact.getOwnedBy() != hero.getId()))
+				throw new Exception("Artifact is not equippable");
+
+			// if hero already has artifact of same type equipped, unequip said artifact
+			String artifactEquippedQuery = "SELECT * FROM ARTIFACTS WHERE ownedBy = " + hero.getId() + " AND isEquipped = true AND type = \"" + artifact.getType().name() + "\""; 
+			ResultSet rsEquipped = this._statement.executeQuery(artifactEquippedQuery);
+			if (rsEquipped.next())
+			{
+				Artifact confirm = _getArtifactFromRs(rsEquipped);
+				System.out.println("Unequipping " + confirm.toString());
+				unequipArtifactOnHero(confirm.getId(), hero);
+			}
+
+			// modify artifact to be equipped by user
+			this._statement.executeUpdate(updateArtifactQuery);
+
+			// add artifact upgrades to user
+			_changeArtifactAttribsFromHero(artifact, hero, true);
+
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
 	// Init conenction and connect to db
 	public Model()
 	{

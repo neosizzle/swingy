@@ -1,4 +1,4 @@
-package swingy.view.charSelect;
+package swingy.view.gui.charSelect;
 
 import javax.swing.table.AbstractTableModel;
 

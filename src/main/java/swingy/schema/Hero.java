@@ -140,10 +140,15 @@ public class Hero extends Schema{
 	public int getHp() {
 		return hp;
 	}
+	public void setHp(int hp) {
+		this.hp = hp;
+	}
 	public int getMaxHp() {
 		return maxHp;
 	}
-
+	public void setMaxHp(int maxHp) {
+		this.maxHp = maxHp;
+	}
 	public int getId() {
 		return id;
 	}
@@ -165,7 +170,7 @@ public class Hero extends Schema{
 		this.atk = atk;
 		this.def = def;
 		this.hp = hp;
-		this.maxExp = maxExp;
+		this.maxHp = maxHp;
 		this.fn_map = generateFnMap();
 	}
 
