@@ -2,7 +2,6 @@ package swingy.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -13,11 +12,13 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import swingy.enums.ClassName;
+import swingy.interfaces.Coordinate;
 import swingy.model.Model;
 import swingy.schema.Artifact;
 import swingy.schema.Enemy;
 import swingy.schema.Game;
 import swingy.schema.Hero;
+import swingy.view.Map;
 
 public class GameController {
 	Model model;
@@ -58,14 +59,15 @@ public class GameController {
 	{
 		ArrayList<Enemy> res = new ArrayList<Enemy>();
 		res = model.getEnemiesFromGameId(game.getId());
-		if (res.size() == 0 && game.getHeight() != 10) // all elemies slayed
-			return res;
-		else if (res.size() == 0)
+		if (res.size() == 0)
 		{
-			for (int index = 0; index < 40; index++) {
+			for (int index = 0; index < 80; index++) {
 				Random rand = new Random();
 				int x = rand.nextInt((40 - 0) + 1);
 				int y = rand.nextInt((40 - 0) + 1);
+
+				// spawn position
+				if (x == game.getPosCol() && y == game.getPosRow()) continue;
 
 				Enemy newEnemy = new Enemy("someenemy", 5, 5, 5, 10, game.getId(),x, y, 1);
 
@@ -85,14 +87,31 @@ public class GameController {
 	}
 
 	// get game or generate game
-	public Game getOrAddGame(int heroId)
+	public Game getOrAddGame(Hero hero)
 	{
 		Game res;
 
-		res = model.getGameByHeroId(heroId);
+		res = model.getGameByHeroId(hero.getId());
 		if (res == null)
-			res = model.generateNewGame(heroId);
+			res = model.generateNewGame(hero);
 		return res;
+	}
+
+	// handle movement and generates new map
+	public Game handleMove(Game game, String direction, Coordinate prevCoords)
+	{
+		try {
+			// attempt to update game in db
+			Game newGame = model.moveDirection(game, direction, prevCoords);
+			
+			// return newgame
+			return newGame;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Move error");
+			return null;
+		}
 	}
 
 	// handles hero selection action
@@ -108,7 +127,7 @@ public class GameController {
 	{
 		Hero newHero = null;
 
-		Map<String, ClassName> classMap = new HashMap<String, ClassName>();
+		java.util.Map<String, ClassName> classMap = new HashMap<String, ClassName>();
 		classMap.put("JIMIN", ClassName.JIMIN);
 		classMap.put("JUNGKOOK", ClassName.JUNGKOOK);
 		classMap.put("JHOPE", ClassName.JHOPE);

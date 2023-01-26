@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import swingy.enums.ArtifactQuality;
 import swingy.enums.ArtifactType;
 import swingy.enums.ClassName;
+import swingy.interfaces.Coordinate;
 import swingy.schema.Artifact;
 import swingy.schema.Enemy;
 import swingy.schema.Game;
 import swingy.schema.Hero;
+import swingy.view.Map;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -76,7 +78,7 @@ public class Model {
 		// create heroes table
 		String query = "CREATE TABLE IF NOT EXISTS GAMES " +
 		"(id			INT			AUTO_INCREMENT PRIMARY KEY     	NOT NULL ," +
-		" explored			VARCHAR(50) 		NOT NULL, " + 
+		" explored			VARCHAR(5000) 		NOT NULL, " + 
 		" posX			INT						NOT NULL, " +
 		" posY			INT						NOT NULL, " +
 		" width			INT						NOT NULL, " + 
@@ -363,14 +365,40 @@ public class Model {
 	}
 
 	// generate new game and add enemies
-	public Game generateNewGame(int heroId)
+	public Game generateNewGame(Hero hero)
 	{
-		Game res = new Game(heroId, 10, 10, 20, 20, "(20,20)");
+		int dim = (hero.getLevel() - 1) * 5 + 10;
+		Game res = new Game(hero.getId(), dim, dim, 20, 20, "(20,20);");
 		int id = addGame(res);
 
-		// add enemies
-
 		res.setId(id);
+		return res;
+	}
+
+	// handles movement
+	public Game moveDirection(Game game, String direction, Coordinate prevCoord) throws SQLException
+	{
+		String query;
+		String directionVariable;
+		String exploredVariable;
+		Game res;
+
+		res = null;
+		directionVariable = "";
+		if (direction.equalsIgnoreCase("n"))
+			directionVariable = "posY = " + (prevCoord.row - 1);
+		if (direction.equalsIgnoreCase("s"))
+			directionVariable = "posY = " + (prevCoord.row + 1);
+		if (direction.equalsIgnoreCase("e"))
+			directionVariable = "posX = " + (prevCoord.col + 1);
+		if (direction.equalsIgnoreCase("w"))
+			directionVariable = "posX = " + (prevCoord.col - 1);
+
+		exploredVariable = "explored = \"" + game.getExplored() + prevCoord.toString() + ";\"";
+
+		query = "UPDATE GAMES SET " + directionVariable + ", " + exploredVariable + " WHERE id = " + game.getId();
+		this._statement.executeUpdate(query);
+		res = getGameByHeroId(game.getHeroId());
 		return res;
 	}
 

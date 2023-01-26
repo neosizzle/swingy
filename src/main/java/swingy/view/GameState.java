@@ -9,6 +9,7 @@ import swingy.schema.Hero;
 public class GameState {
 	private Hero _currHero;
 	private Game _currGame;
+	private Map _map;
 	private ArrayList<Enemy> _enemies;
 
 	public Hero getCurrHero() {
@@ -28,5 +29,13 @@ public class GameState {
 	}
 	public void setEnemies(ArrayList<Enemy> _enemies) {
 		this._enemies = _enemies;
+	}
+
+	public Map getMap() {
+		return _map;
+	}
+
+	public void setMap(Map _map) {
+		this._map = _map;
 	}
 }

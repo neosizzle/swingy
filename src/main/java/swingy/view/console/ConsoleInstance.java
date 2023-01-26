@@ -1,15 +1,18 @@
 package swingy.view.console;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import swingy.controller.GameController;
 import swingy.interfaces.Command;
+import swingy.interfaces.Coordinate;
 import swingy.schema.Artifact;
 import swingy.schema.Enemy;
 import swingy.schema.Game;
 import swingy.schema.Hero;
 import swingy.view.GameState;
+import swingy.view.Map;
 import swingy.view.console.consoleManual.Manual;
 
 public class ConsoleInstance {
@@ -114,10 +117,7 @@ public class ConsoleInstance {
 
 	public void test()
 	{
-		ArrayList<Enemy> enemies = _gamestateRef.getEnemies();
-		for (Enemy enemy : enemies) {
-			System.out.println(enemy.getId());
-		}
+		System.out.println(this._gamestateRef.getMap().toString());
 	}
 
 	public void artifactEquipId(int artifactId)
@@ -142,6 +142,111 @@ public class ConsoleInstance {
 
 	}
 
+	public void handleMove(String command)
+	{
+		String [] tokens = command.split(" ", 0);
+		
+		if (tokens.length < 2)
+		{
+			System.out.println("Invalid usage");
+			return;
+		}
+		String direction = tokens[1];
+		if (
+			!direction.equalsIgnoreCase("n") &&
+			!direction.equalsIgnoreCase("s") &&
+			!direction.equalsIgnoreCase("w") &&
+			!direction.equalsIgnoreCase("e") )
+		{
+			System.out.println("Invalid usage");
+			return;
+		}
+
+		// save current coords
+		Coordinate prevCoord = new Coordinate(_gamestateRef.getCurrGame().getPosRow(), _gamestateRef.getCurrGame().getPosCol());
+
+		// get desired space entity
+		char desiredEntity;
+
+		desiredEntity = 0;
+		if (direction.equalsIgnoreCase("n"))
+			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row - 1, prevCoord.col);
+		if (direction.equalsIgnoreCase("s"))
+			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row + 1, prevCoord.col);
+		if (direction.equalsIgnoreCase("e"))
+			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row, prevCoord.col + 1);
+		if (direction.equalsIgnoreCase("w"))
+			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row, prevCoord.col - 1);
+
+		// if its a wall or null, update game and map, u win
+		if (desiredEntity == '=' || desiredEntity == 0)
+		{
+			// winning actions
+			// delete enemies and game
+			// exit program
+		}
+
+		// if its enemy, you fight / run
+		if (desiredEntity == 'E')
+		{
+			// prompt to fight or run. 
+			System.out.println("\n" +
+			"#     # ### #    # #######  ##### \n" +
+			" #   #   #  #   #  #       #     # \n" +
+			"  # #    #  #  #   #       #       \n" +
+			"   #     #  ###    #####    #####  \n" +
+			"   #     #  #  #   #             # \n" +
+			"   #     #  #   #  #       #     # \n" +
+			"   #    ### #    # #######  #####  \n" +
+											  "\n");
+			System.out.println("You have touched an enemy without consent. \nType N to run, any other key to fight.");
+			String line = sc.nextLine();
+			Random random = new Random();
+
+			// if run, return.
+			if (line.startsWith("N"))
+			{
+				if (random.nextInt(10) < 5)
+				{
+					System.out.println("U ran, no ballz");
+					return ;
+				}
+				System.out.println("u cant run hahahahahah get rekt");
+			}
+
+			// if fight, initiate combat
+			System.out.println("You chose violence.");
+				// if lose, game over delete enemies and game and exit
+
+				// if win, remove enemy from db and gamestate
+				// roll for artifact prompt
+				// if user accepts, add to artifact inventory
+			return ;
+		}
+
+		// update game and map
+		Game newGame = _gameControllerRef.handleMove(
+			_gamestateRef.getCurrGame(),
+			direction,
+			prevCoord
+			);
+		if (newGame != null)
+		{
+			_gamestateRef.setCurrGame(newGame);
+			_gamestateRef.setMap(new Map(newGame, _gamestateRef.getEnemies()));
+		}
+		// Map newMap = _gameControllerRef.handleMove(
+		// 	_gamestateRef.getCurrGame(),
+		// 	direction,
+		// 	prevCoord,
+		// 	_gamestateRef.getMap(),
+		// 	_gamestateRef.getEnemies()
+		// 	);
+		// if (newMap != null)
+		// 	_gamestateRef.setMap(newMap);
+		System.out.println(_gamestateRef.getMap().toString());
+	}
+
 	public void displayStats()
 	{
 		System.out.println("====STATS====");
@@ -153,6 +258,16 @@ public class ConsoleInstance {
 		System.out.println("Hp: " + _gamestateRef.getCurrHero().getHp());
 		System.out.println("MaxHp: " + _gamestateRef.getCurrHero().getMaxHp());
 		System.out.println("Id: " + _gamestateRef.getCurrHero().getId());
+	}
+
+	public void printMap()
+	{
+		System.out.println(this._gamestateRef.getMap().toString());
+		System.out.println("= - walls");
+		System.out.println("# - undiscovered area");
+		System.out.println("- - discovered area");
+		System.out.println("E - enemy");
+		System.out.println("P - player");
 	}
 
 	public void printHelpMain()

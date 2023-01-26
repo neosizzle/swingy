@@ -78,7 +78,6 @@ public class GameView {
 				String line = sc.nextLine();
 				
 				// run insstructions based on line
-				_consoleInstance.test();
 				if (line.startsWith("help"))
 					_consoleInstance.printHelpMain();
 				else if (line.equals("stat"))
@@ -89,8 +88,14 @@ public class GameView {
 					_consoleInstance.artifactEquipId(Integer.parseInt(line.split(" ")[2]));
 				else if (line.startsWith("artifacts unequip ") || line.startsWith("a u "))
 					_consoleInstance.artifactUnequipId(Integer.parseInt(line.split(" ")[2]));
+				else if (line.startsWith("move "))
+					_consoleInstance.handleMove(line);
+				else if (line.startsWith("map"))
+					_consoleInstance.printMap();
 				else if (line.equals("exit"))
 					System.exit(0);
+				else 
+					System.out.println("Unknown command \""+line+"\"");
 			}
 			// gui game
 			else
@@ -114,11 +119,14 @@ public class GameView {
 	{
 		this.charSelect();
 		System.out.println("selected hero: " + _gameState.getCurrHero().getId() + ", " + _gameState.getCurrHero().getName());
-		// generate or get map
-		this._gameState.setCurrGame(_controller.getOrAddGame(_gameState.getCurrHero().getId()));
+		// generate or get game
+		this._gameState.setCurrGame(_controller.getOrAddGame(_gameState.getCurrHero()));
 
 		// generate or add enemies
 		this._gameState.setEnemies(this._controller.getOrAddEnemies(_gameState.getCurrGame()));
+
+		// set map
+		this._gameState.setMap(new Map(this._gameState.getCurrGame(), this._gameState.getEnemies()));
 
 		this.gameStart();
 
