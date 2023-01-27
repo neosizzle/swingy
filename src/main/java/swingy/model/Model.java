@@ -53,7 +53,7 @@ public class Model {
 	// init artifacts table
 	private void _initArtifactsTable()
 	{
-		// create heroes table
+		// create artifacts table
 		String query = "CREATE TABLE IF NOT EXISTS ARTIFACTS " +
 		"(id			INT			AUTO_INCREMENT PRIMARY KEY     	NOT NULL ," +
 		" name			VARCHAR(50) 			NOT NULL, " + 
@@ -289,6 +289,14 @@ public class Model {
 		return res;
 	}
 
+	// reset hp
+	public void respawnHeroById(Hero hero) throws SQLException
+	{
+		int maxHp = hero.getMaxHp();
+		String query = "UPDATE HEROES SET hp = " + maxHp;
+		this._statement.executeUpdate(query);
+	}
+
 	/**
 	 * GAME
 	 */
@@ -402,6 +410,12 @@ public class Model {
 		return res;
 	}
 
+	public void deleteGameById(int id) throws SQLException
+	{
+		String query = "DELETE FROM GAMES WHERE id = " + id;
+		this._statement.executeUpdate(query);
+	}
+
 	/**
 	 * ENEMIES
 	 */
@@ -466,17 +480,16 @@ public class Model {
 	}
 
 	// get enemies from gameid and position
-	public ArrayList<Enemy> getEnemiesFromGameIdAndPos(int gameId, int posX, int posY)
+	public Enemy getEnemyFromGameIdAndPos(int gameId, int posX, int posY)
 	{
-		ArrayList<Enemy> res = new ArrayList<Enemy>();
+		Enemy res = null;
 		String query = "SELECT * FROM ENEMIES WHERE gameId = " + gameId + " AND posX = " + posX + " AND posY = " + posY;
 
 		try {
 			ResultSet rs = this._statement.executeQuery(query);
 
-			while (rs.next()) {
-				res.add(getEnemyFromRs(rs));
-			}
+			if (rs.next())
+				res = getEnemyFromRs(rs);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -503,6 +516,20 @@ public class Model {
 		}
 
 		return res;
+	}
+
+	// delete enemy with gameid
+	public void deleteEnemiesByGameId(int gameId) throws SQLException
+	{
+		String query = "DELETE FROM ENEMIES WHERE gameId = " + gameId;
+		this._statement.executeUpdate(query);
+	}
+
+	// delete enemy with enemyid
+	public void deleteEnemiesByEnemyId(int id) throws SQLException
+	{
+		String query = "DELETE FROM ENEMIES WHERE id = " + id;
+		this._statement.executeUpdate(query);
 	}
 
 

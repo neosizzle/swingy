@@ -69,10 +69,10 @@ public class GameController {
 				// spawn position
 				if (x == game.getPosCol() && y == game.getPosRow()) continue;
 
-				Enemy newEnemy = new Enemy("someenemy", 5, 5, 5, 10, game.getId(),x, y, 1);
+				Enemy newEnemy = new Enemy("someenemy", 50, 5, 5, 50, game.getId(),x, y, 1);
 
 				// check if position is occupied
-				if (model.getEnemiesFromGameIdAndPos(game.getId(), x, y).size() > 0)
+				if (model.getEnemyFromGameIdAndPos(game.getId(), x, y) != null)
 					continue;
 
 				int id = model.addEnemy(newEnemy);
@@ -84,6 +84,12 @@ public class GameController {
 		}
 
 		return res;
+	}
+
+	// get enemy from gameid and pos
+	public Enemy getEnemyFromGameIdAndPos(int gameId, int row, int col)
+	{
+		return model.getEnemyFromGameIdAndPos(gameId, col, row);
 	}
 
 	// get game or generate game
@@ -121,6 +127,55 @@ public class GameController {
 		selected = model.getHero(id);
 		return selected;
 	}
+
+	// handle hero death
+	public void handleDeath(int gameId, Hero hero)
+	{
+		try {
+			// delete enemies
+			model.deleteEnemiesByGameId(gameId);
+
+			// delete game
+			model.deleteGameById(gameId);
+
+			// reset hp
+			model.respawnHeroById(hero);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error respawing");
+		}
+	}
+
+	// handle victory
+	// will return new game
+	public void handleVictory(Enemy enemy, ArrayList<Enemy> enemies, Hero hero, Game game)
+	{
+		try {
+			// remove enemy from db
+			model.deleteEnemiesByEnemyId(enemy.getId());
+
+			// remove enemy from gamestate
+			int indexToRm = -1;
+			for (int i = 0; i < enemies.size(); i++) {
+				if (enemies.get(i).getId() == enemy.getId())
+				{
+					indexToRm = i;
+					break ;
+				}
+			}
+			if (indexToRm >= 0)
+				enemies.remove(indexToRm);
+
+			// TODO ;UPDATE GAME
+			// level up, expand map, upgrade enemies
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Cant handle victory");
+		}
+	}
+
 
 	// handles hero craetion action
 	public Hero handleCreate(String name, String class_str)

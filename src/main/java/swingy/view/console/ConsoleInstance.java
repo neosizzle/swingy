@@ -165,18 +165,22 @@ public class ConsoleInstance {
 		// save current coords
 		Coordinate prevCoord = new Coordinate(_gamestateRef.getCurrGame().getPosRow(), _gamestateRef.getCurrGame().getPosCol());
 
+		// get desired coordinates
+		Coordinate desiredCoord = new Coordinate(prevCoord.row, prevCoord.col);
+		
+		if (direction.equalsIgnoreCase("n"))
+			desiredCoord.row -= 1;
+		if (direction.equalsIgnoreCase("s"))
+			desiredCoord.row += 1;
+		if (direction.equalsIgnoreCase("e"))
+			desiredCoord.col += 1;
+		if (direction.equalsIgnoreCase("w"))
+			desiredCoord.col -= 1;
+
 		// get desired space entity
 		char desiredEntity;
+		desiredEntity = _gamestateRef.getMap().getEntityAt(desiredCoord.row, desiredCoord.col);
 
-		desiredEntity = 0;
-		if (direction.equalsIgnoreCase("n"))
-			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row - 1, prevCoord.col);
-		if (direction.equalsIgnoreCase("s"))
-			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row + 1, prevCoord.col);
-		if (direction.equalsIgnoreCase("e"))
-			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row, prevCoord.col + 1);
-		if (direction.equalsIgnoreCase("w"))
-			desiredEntity = _gamestateRef.getMap().getEntityAt(prevCoord.row, prevCoord.col - 1);
 
 		// if its a wall or null, update game and map, u win
 		if (desiredEntity == '=' || desiredEntity == 0)
@@ -216,12 +220,66 @@ public class ConsoleInstance {
 
 			// if fight, initiate combat
 			System.out.println("You chose violence.");
-				// if lose, game over delete enemies and game and exit
+			Enemy enemy = _gameControllerRef.getEnemyFromGameIdAndPos(
+				_gamestateRef.getCurrGame().getId(),
+				desiredCoord.row,
+				desiredCoord.col);
+			Hero hero = _gamestateRef.getCurrHero();
 
+			System.out.println(enemy.getName() + ", " + enemy.getMaxHp() + "HP");
+			while (enemy.getHp() > 0 && hero.getHp() > 0) {
+
+				int dodge = new Random().nextInt((10 - 0) + 1);
+
+				// your turn
+				if (dodge < 2)
+				{
+					System.out.println("Enemy dodged your attack.");
+					continue;
+				}
+				int damage = hero.getAtk();
+				enemy.setHp(enemy.getHp() - damage);
+				System.out.println("you hit enemy with " + damage + " damage");
+
+				// enemy turn
+				if (enemy.getHp() <= 0) break;
+				if (dodge < 3)
+				{
+					System.out.println("You dodged enemies attack");
+					continue;
+				}
+				damage = enemy.getAtk();
+				hero.setHp(hero.getHp() - damage);
+				System.out.println("enemy hit you with " + damage + " damage");
+			}
+			if (hero.getHp() == 0)
+			{
+				// if lose, die.
+				System.out.println("you die");
+				this._gameControllerRef.handleDeath(
+					_gamestateRef.getCurrGame().getId(),
+					hero
+					);
+				System.exit(0);
+			}
+			else 
+			{
+				System.out.println("u win");
 				// if win, remove enemy from db and gamestate
+				_gameControllerRef.handleVictory(
+					enemy,
+					_gamestateRef.getEnemies(),
+					hero,
+					_gamestateRef.getCurrGame());
+				
+				// resetmap
+				Map newMap = new Map(_gamestateRef.getCurrGame(), _gamestateRef.getEnemies());
+				_gamestateRef.setMap(newMap);
+
 				// roll for artifact prompt
 				// if user accepts, add to artifact inventory
-			return ;
+
+			}
 		}
 
 		// update game and map
@@ -235,15 +293,6 @@ public class ConsoleInstance {
 			_gamestateRef.setCurrGame(newGame);
 			_gamestateRef.setMap(new Map(newGame, _gamestateRef.getEnemies()));
 		}
-		// Map newMap = _gameControllerRef.handleMove(
-		// 	_gamestateRef.getCurrGame(),
-		// 	direction,
-		// 	prevCoord,
-		// 	_gamestateRef.getMap(),
-		// 	_gamestateRef.getEnemies()
-		// 	);
-		// if (newMap != null)
-		// 	_gamestateRef.setMap(newMap);
 		System.out.println(_gamestateRef.getMap().toString());
 	}
 

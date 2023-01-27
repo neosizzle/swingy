@@ -190,43 +190,43 @@ public class Hero extends Schema{
 		{
 			this.atk = 5;
 			this.def = 5;
-			this.hp = 10;
-			this.maxHp = 10;
+			this.hp = 100;
+			this.maxHp = 100;
 		}
 		if (className == ClassName.JUNGKOOK)
 		{
 			this.atk = 8;
 			this.def = 2;
-			this.hp = 9;
-			this.maxHp = 9;
+			this.hp = 90;
+			this.maxHp = 90;
 		}
 		if (className == ClassName.JHOPE)
 		{
 			this.atk = 3;
 			this.def = 4;
-			this.hp = 15;
-			this.maxHp = 15;
+			this.hp = 150;
+			this.maxHp = 150;
 		}
 		if (className == ClassName.KIM_JUNG_UN)
 		{
 			this.atk = 10;
 			this.def = 5;
-			this.hp = 3;
-			this.maxHp = 3;
+			this.hp = 30;
+			this.maxHp = 30;
 		}
 		if (className == ClassName.TAEYUNG)
 		{
 			this.atk = 1;
 			this.def = 10;
-			this.hp = 20;
-			this.maxHp = 20;
+			this.hp = 200;
+			this.maxHp = 200;
 		}
 		if (className == ClassName.VI)
 		{
 			this.atk = 2;
 			this.def = 15;
-			this.hp = 9;
-			this.maxHp = 9;
+			this.hp = 90;
+			this.maxHp = 90;
 		}
 	}
 }
