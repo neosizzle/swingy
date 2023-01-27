@@ -2,6 +2,7 @@ package swingy.model;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Random;
 
 import swingy.enums.ArtifactQuality;
 import swingy.enums.ArtifactType;
@@ -293,7 +294,44 @@ public class Model {
 	public void respawnHeroById(Hero hero) throws SQLException
 	{
 		int maxHp = hero.getMaxHp();
-		String query = "UPDATE HEROES SET hp = " + maxHp;
+		String query = "UPDATE HEROES SET hp = " + maxHp + " WHERE id = " + hero.getId();
+		this._statement.executeUpdate(query);
+	}
+
+	// update hero exp
+	public void updateHeroExp(Hero hero) throws SQLException
+	{
+		String query = "UPDATE HEROES SET exp = " + hero.getExp() + " WHERE id = " + hero.getId();
+		this._statement.executeUpdate(query);
+	}
+
+	// update hero hp
+	public void updateHeroHp(Hero hero) throws SQLException
+	{
+		String query = "UPDATE HEROES SET hp = " + hero.getHp() + " WHERE id = " + hero.getId();
+		this._statement.executeUpdate(query);
+	}
+
+	public void levelUpHero(Hero hero) throws SQLException
+	{
+		if (hero.getLevel() == 7) return;
+		hero.setLevel(hero.getLevel() + 1);
+		hero.setMaxExp((int) (hero.getLevel() * 1000 + Math.pow(hero.getLevel() - 1, 2) * 450));
+		hero.setExp(0);
+		hero.setDef(hero.getDef() + 2);
+		hero.setAtk(hero.getAtk() + 2);
+		hero.setMaxHp(hero.getMaxHp() + 10);
+		hero.setHp(hero.getMaxHp());
+
+		String query = "UPDATE HEROES SET level = " + hero.getLevel() + 
+					", maxExp = " + hero.getMaxExp() + 
+					", exp = "+  hero.getExp() +
+					", def = " + hero.getDef() + 
+					", atk = " + hero.getAtk() + 
+					", maxHp = " + hero.getMaxHp() + 
+					", hp = " + hero.getHp() +
+					" WHERE id = " + hero.getId();
+
 		this._statement.executeUpdate(query);
 	}
 
@@ -477,6 +515,29 @@ public class Model {
 			System.exit(1);
 		}
 		return -1;
+	}
+
+	// buff enemy
+	public void buffEnemy(Enemy enemy) throws SQLException
+	{
+		if (enemy.getLevel() == 7) return;
+
+		int levelToAdd = new Random().nextInt(3 - 0) + 1;
+
+		enemy.setLevel(enemy.getLevel() + levelToAdd);
+		enemy.setDef(enemy.getDef() * (int)(1.5 * levelToAdd));
+		enemy.setAtk(enemy.getAtk() * (int)(1.5 * levelToAdd));
+		enemy.setMaxHp(enemy.getMaxHp() * (int)(1.5 * levelToAdd));
+		enemy.setHp(enemy.getMaxHp());
+
+		String query = "UPDATE ENEMIES SET level = " + enemy.getLevel() + 
+					", def = " + enemy.getDef() + 
+					", atk = " + enemy.getAtk() + 
+					", maxHp = " + enemy.getMaxHp() + 
+					", hp = " + enemy.getHp() +
+					" WHERE id = " + enemy.getId();
+
+		this._statement.executeUpdate(query);
 	}
 
 	// get enemies from gameid and position

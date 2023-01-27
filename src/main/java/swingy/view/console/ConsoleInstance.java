@@ -227,6 +227,7 @@ public class ConsoleInstance {
 			Hero hero = _gamestateRef.getCurrHero();
 
 			System.out.println(enemy.getName() + ", " + enemy.getMaxHp() + "HP");
+			int levelSave = hero.getLevel();
 			while (enemy.getHp() > 0 && hero.getHp() > 0) {
 
 				int dodge = new Random().nextInt((10 - 0) + 1);
@@ -272,13 +273,15 @@ public class ConsoleInstance {
 					hero,
 					_gamestateRef.getCurrGame());
 				
+				if (levelSave < hero.getLevel())
+					System.out.println("You leveled up!");
 				// resetmap
 				Map newMap = new Map(_gamestateRef.getCurrGame(), _gamestateRef.getEnemies());
 				_gamestateRef.setMap(newMap);
-
+				
 				// roll for artifact prompt
 				// if user accepts, add to artifact inventory
-
+				return ;
 			}
 		}
 
@@ -293,7 +296,7 @@ public class ConsoleInstance {
 			_gamestateRef.setCurrGame(newGame);
 			_gamestateRef.setMap(new Map(newGame, _gamestateRef.getEnemies()));
 		}
-		System.out.println(_gamestateRef.getMap().toString());
+		// System.out.println(_gamestateRef.getMap().toString());
 	}
 
 	public void displayStats()

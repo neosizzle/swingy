@@ -61,7 +61,7 @@ public class GameController {
 		res = model.getEnemiesFromGameId(game.getId());
 		if (res.size() == 0)
 		{
-			for (int index = 0; index < 80; index++) {
+			for (int index = 0; index < 360; index++) {
 				Random rand = new Random();
 				int x = rand.nextInt((40 - 0) + 1);
 				int y = rand.nextInt((40 - 0) + 1);
@@ -69,7 +69,7 @@ public class GameController {
 				// spawn position
 				if (x == game.getPosCol() && y == game.getPosRow()) continue;
 
-				Enemy newEnemy = new Enemy("someenemy", 50, 5, 5, 50, game.getId(),x, y, 1);
+				Enemy newEnemy = new Enemy("someenemy", 20, 5, 5, 20, game.getId(),x, y, 1);
 
 				// check if position is occupied
 				if (model.getEnemyFromGameIdAndPos(game.getId(), x, y) != null)
@@ -146,8 +146,7 @@ public class GameController {
 		}
 	}
 
-	// handle victory
-	// will return new game
+	// handle victory and move
 	public void handleVictory(Enemy enemy, ArrayList<Enemy> enemies, Hero hero, Game game)
 	{
 		try {
@@ -165,10 +164,31 @@ public class GameController {
 			}
 			if (indexToRm >= 0)
 				enemies.remove(indexToRm);
+			
+			// update hp
+			int levelDiff = enemy.getLevel() - hero.getLevel();
+			int expGain = (int) ((int) hero.getMaxExp() * ((levelDiff + 1) * 0.25)) + 1;
 
-			// TODO ;UPDATE GAME
-			// level up, expand map, upgrade enemies
+			if (expGain + hero.getExp() >= hero.getMaxExp())
+			{
+				// lv up
+				model.levelUpHero(hero);
 
+				// map expand
+				game.setWidth(game.getWidth() + 5);
+				game.setHeight(game.getHeight() + 5);
+
+				//upgrade enemies
+				for (Enemy _enemy : enemies) {
+					model.buffEnemy(_enemy);
+				}
+				return;
+			}
+
+			// no lv up, update exp and hp
+			hero.setExp(expGain + hero.getExp());
+			model.updateHeroHp(hero);
+			model.updateHeroExp(hero);
 
 		} catch (Exception e) {
 			e.printStackTrace();
