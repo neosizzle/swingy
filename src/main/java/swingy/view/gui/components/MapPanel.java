@@ -1,0 +1,106 @@
+package swingy.view.gui.components;
+
+import java.awt.Color;
+import java.awt.Image;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import swingy.schema.Game;
+import swingy.view.GameState;
+import swingy.view.Map;
+
+public class MapPanel {
+	private JFrame _window;
+	private GameState _gamestateRef;
+	private JPanel _contentPane;
+	private final int PANE_WIDTH = 1200;
+	private final int PANE_HEIGHT = 800;
+	private Image _enemyPic;
+	private Image _heroPic;
+	private Image _exploredPic;
+	private Image _wallPic;
+	private Image _unexploredPic;
+
+	public void destroy()
+	{
+		_window.remove(_contentPane);
+	}
+
+	public void create()
+	{
+		// setup content pane
+		_contentPane.setBounds(100, 0, PANE_WIDTH, PANE_HEIGHT);
+		_contentPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		_contentPane.setLayout(null);
+
+		final int ASSET_WIDTH = 30;
+		final int ASSET_HEIGHT = 20;
+
+		Map map = _gamestateRef.getMap();
+		Game game = _gamestateRef.getCurrGame();
+
+		for (int row = 0; row < 40; row++) {
+			for (int col = 0; col < 40; col++) {
+				char entity = map.getEntityAt(row, col);
+				JLabel picLabel;
+
+				picLabel = null;
+				if (entity == '=')
+					picLabel = new JLabel(new ImageIcon(_wallPic));
+				if (entity == '#')
+					picLabel = new JLabel(new ImageIcon(_unexploredPic));
+				if (entity == '-')
+					picLabel = new JLabel(new ImageIcon(_exploredPic));
+				if (entity == 'E')
+					picLabel = new JLabel(new ImageIcon(_enemyPic));
+				if (entity == 'P')
+					picLabel = new JLabel(new ImageIcon(_heroPic));
+				
+				if (picLabel != null)
+				{
+					picLabel.setBounds(col * ASSET_WIDTH, row * ASSET_HEIGHT, ASSET_WIDTH, ASSET_HEIGHT);
+					_contentPane.add(picLabel);
+				}
+				else
+				{
+					// System.out.println("null pic");
+				}
+			}
+		}
+		_window.add(_contentPane);
+	}
+
+	public void update(GameState gameState)
+	{
+		this._gamestateRef = gameState;
+		destroy();
+		create();
+	}
+
+	public MapPanel(JFrame window, GameState gamestate)
+	{
+		this._window = window;
+		this._gamestateRef = gamestate;
+		this._contentPane = new JPanel();
+
+		// load pictures
+		try {
+			_enemyPic = ImageIO.read(new File("src/main/java/swingy/assets/img/enemy.png")).getScaledInstance(40, 20, Image.SCALE_DEFAULT);
+			_heroPic = ImageIO.read(new File("src/main/java/swingy/assets/img/hero.png")).getScaledInstance(40, 20, Image.SCALE_DEFAULT);
+			_exploredPic = ImageIO.read(new File("src/main/java/swingy/assets/img/explored.png")).getScaledInstance(40, 20, Image.SCALE_DEFAULT);
+			_unexploredPic = ImageIO.read(new File("src/main/java/swingy/assets/img/unexplored.png")).getScaledInstance(40, 20, Image.SCALE_DEFAULT);
+			_wallPic = ImageIO.read(new File("src/main/java/swingy/assets/img/wall.png")).getScaledInstance(40, 20, Image.SCALE_DEFAULT);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

@@ -1,5 +1,6 @@
 package swingy.view;
 
+import java.awt.Dimension;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
@@ -104,7 +105,7 @@ public class GameView {
 			else
 			{
 				f_mainGame = new JFrame();
-				f_mainGame.setBounds(0, 0, 1360, 768);
+				f_mainGame.setMinimumSize(new Dimension(1920, 1080));
 				this._guiInstance.setGamestateRef(_gameState);
 				this._guiInstance.startGame(f_mainGame);
 				while (this._isGui) {
