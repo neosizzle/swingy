@@ -11,6 +11,7 @@ import javax.swing.WindowConstants;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 
 import swingy.controller.GameController;
@@ -18,6 +19,7 @@ import swingy.interfaces.Command;
 import swingy.schema.Hero;
 import swingy.view.GameState;
 import swingy.view.gui.charSelect.CharSelectATM;
+import swingy.view.gui.components.StatusPanel;
 
 public class GuiInstance {
 	private final TableUtils _tableUtils = new TableUtils();
@@ -26,7 +28,11 @@ public class GuiInstance {
 	private GameController _gameControllerRef;
 	private GameState _gamestateRef;
 	private JFrame _f_charSelect;
+	private JFrame _f_mainGame;
 
+	public void setGamestateRef(GameState _gamestateRef) {
+		this._gamestateRef = _gamestateRef;
+	}
 
 	// run character select window
 	public void charSelect(JFrame f_charSelect)
@@ -138,6 +144,30 @@ public class GuiInstance {
 		f_charSelect.setLayout(null);//using no layout managers  
 		f_charSelect.setVisible(true);//making the frame visible
 
+	}
+
+	// run main game window
+	public void startGame(JFrame f_maingame)
+	{
+		this._f_mainGame = f_maingame;
+
+		StatusPanel status = new StatusPanel(f_maingame, _gamestateRef);
+		status.update(_gamestateRef);
+
+		final JButton switchButton=new JButton("Switch to console");
+		switchButton.setBounds(750, 350, 350, 40);
+		switchButton.addActionListener(new ActionListener(){  
+			public void actionPerformed(ActionEvent e){  
+						_isGuiSwitch.runCommand();
+						_f_mainGame.dispose();
+					}  
+				});
+		f_maingame.add(switchButton);
+
+		f_maingame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		f_maingame.setSize(1360,768);  
+		f_maingame.setLayout(null);//using no layout managers  
+		f_maingame.setVisible(true);//making the frame visible
 	}
 
 	public GuiInstance(Command<Number> isGuiSwitch, GameController gameControllerRef, GameState gameStateRef)

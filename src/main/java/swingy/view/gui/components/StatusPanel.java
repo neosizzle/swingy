@@ -1,0 +1,93 @@
+package swingy.view.gui.components;
+
+import java.awt.Color;
+import java.util.Date;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import swingy.schema.Hero;
+import swingy.view.GameState;
+
+public class StatusPanel {
+	private JFrame _window;
+	private GameState _gamestateref;
+	private JPanel _contentPane;
+	private final int PANE_WIDTH = 272;
+	private final int PANE_HEIGHT = 500;
+
+	public void destroy()
+	{
+		_window.remove(_contentPane);
+	}
+
+	public void create()
+	{
+
+		final int ITEM_HEIGHT = 20;
+		final int ITEM_WIDTH = 272;
+
+		// setup content pane
+		_contentPane.setBounds(0, 0, PANE_WIDTH, PANE_HEIGHT);
+		_contentPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		_contentPane.setLayout(null);
+
+		Hero hero = _gamestateref.getCurrHero();
+
+		// create components here...
+		final JLabel nameLabel = new JLabel("Name: " + hero.getName());
+		nameLabel.setBounds(0, ITEM_HEIGHT, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel classLabel = new JLabel("Class: " + hero.getClassName().name());
+		classLabel.setBounds(0, ITEM_HEIGHT * 2, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel levelLabel = new JLabel("Level: " + hero.getLevel());
+		levelLabel.setBounds(0, ITEM_HEIGHT * 3, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel expLabel = new JLabel("Exp: " + hero.getExp());
+		expLabel.setBounds(0, ITEM_HEIGHT * 4, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel atkLabel = new JLabel("Atk: " + hero.getAtk());
+		atkLabel.setBounds(0, ITEM_HEIGHT * 5, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel defLabel = new JLabel("Def: " + hero.getDef());
+		defLabel.setBounds(0, ITEM_HEIGHT * 6, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel hpLabel = new JLabel("Hp: " + hero.getHp());
+		hpLabel.setBounds(0, ITEM_HEIGHT * 7, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel maxHpLabel = new JLabel("maxHp: " + hero.getMaxHp());
+		maxHpLabel.setBounds(0, ITEM_HEIGHT * 8, ITEM_WIDTH, ITEM_HEIGHT);
+
+		final JLabel maxExpLabel = new JLabel("maxExp: " + hero.getMaxExp());
+		maxExpLabel.setBounds(0, ITEM_HEIGHT * 9, ITEM_WIDTH, ITEM_HEIGHT);
+
+		_contentPane.add(classLabel);
+		_contentPane.add(nameLabel);
+		_contentPane.add(expLabel);
+		_contentPane.add(maxExpLabel);
+		_contentPane.add(atkLabel);
+		_contentPane.add(defLabel);
+		_contentPane.add(hpLabel);
+		_contentPane.add(maxHpLabel);
+		_contentPane.add(levelLabel);
+
+		_window.add(_contentPane);
+	}
+
+	public void update(GameState gamestate)
+	{
+		this._gamestateref = gamestate;
+		destroy();
+		create();
+	}
+
+	public StatusPanel(JFrame window, GameState gamestate)
+	{
+		this._window = window;
+		this._gamestateref = gamestate;
+		this._contentPane = new JPanel();
+	}
+}

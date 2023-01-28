@@ -793,6 +793,7 @@ public class Model {
 			throw new Exception(e);
 		}
 	}
+
 	// Init conenction and connect to db
 	public Model()
 	{

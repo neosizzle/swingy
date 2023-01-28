@@ -11,6 +11,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import swingy.enums.ArtifactQuality;
+import swingy.enums.ArtifactType;
 import swingy.enums.ClassName;
 import swingy.interfaces.Coordinate;
 import swingy.model.Model;
@@ -52,6 +54,42 @@ public class GameController {
 	public void unequipArtifactOnHero(int artifactId, Hero hero) throws Exception
 	{
 		model.unequipArtifactOnHero(artifactId, hero);
+	}
+
+	// roll new artifact
+	public Artifact rollNewArtifact(Enemy enemy, Hero hero)
+	{
+		int rollChance = new Random().nextInt((10 - 0) + 1);
+		int levelDiff = Math.abs(enemy.getLevel() - hero.getLevel());
+
+		if (rollChance < 4) return null;
+
+		ArtifactQuality quality = ArtifactQuality.SOFT;
+
+		if (levelDiff == 1) quality = ArtifactQuality.LIMP;
+		else if (new Random().nextInt(2) != 0) quality = ArtifactQuality.HARD;
+		else quality = ArtifactQuality.VIGIROUS;
+
+
+		// attr =(base * qualitymult) + herolevel
+		int qualitymult = quality == ArtifactQuality.LIMP ? 2 :
+			quality == ArtifactQuality.SOFT ? 3 :
+			quality == ArtifactQuality.HARD ? 4 :
+			5;
+
+		int attr = (2 * qualitymult) + hero.getLevel();
+
+		ArtifactType type = ArtifactType.ARMOR;
+		int typeRandomSeed = new Random().nextInt(3);
+		if (typeRandomSeed == 0)
+			type = ArtifactType.HELM;
+		if (typeRandomSeed == 1)
+			type = ArtifactType.WEAPON;
+		
+		Artifact newArtifact = new Artifact("some artifact name", quality, type, attr, false, hero.getId());
+		int id = model.addArtifact(newArtifact);
+		newArtifact.setId(id);
+		return newArtifact;
 	}
 
 	// get enemies for game or add enemies
@@ -129,7 +167,7 @@ public class GameController {
 	}
 
 	// handle hero death
-	public void handleDeath(int gameId, Hero hero)
+	public void handleGameOVer(int gameId, Hero hero)
 	{
 		try {
 			// delete enemies

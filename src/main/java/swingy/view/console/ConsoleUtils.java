@@ -12,7 +12,7 @@ public class ConsoleUtils {
 	{
 		// print first row
 		for (String column : columns) {
-			System.out.print(column.replace("get", "") + "\t\t");
+			System.out.print(column.replace("get", "") + "\t\t\t\t");
 		}
 		System.out.println();
 
@@ -22,7 +22,7 @@ public class ConsoleUtils {
 
 			// loop through each column of object
 			for (String column : columns) {
-				System.out.print(fn_map.get(column).runCommand() + "\t\t");
+				System.out.print(fn_map.get(column).runCommand() + "\t\t\t\t");
 			}
 			System.out.println();
 		}

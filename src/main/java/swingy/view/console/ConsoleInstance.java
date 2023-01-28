@@ -185,9 +185,12 @@ public class ConsoleInstance {
 		// if its a wall or null, update game and map, u win
 		if (desiredEntity == '=' || desiredEntity == 0)
 		{
-			// winning actions
-			// delete enemies and game
-			// exit program
+			System.out.println("you win gg");
+			this._gameControllerRef.handleGameOVer(
+				_gamestateRef.getCurrGame().getId(),
+				_gamestateRef.getCurrHero()
+				);
+			System.exit(0);
 		}
 
 		// if its enemy, you fight / run
@@ -257,7 +260,7 @@ public class ConsoleInstance {
 			{
 				// if lose, die.
 				System.out.println("you die");
-				this._gameControllerRef.handleDeath(
+				this._gameControllerRef.handleGameOVer(
 					_gamestateRef.getCurrGame().getId(),
 					hero
 					);
@@ -280,7 +283,14 @@ public class ConsoleInstance {
 				_gamestateRef.setMap(newMap);
 				
 				// roll for artifact prompt
-				// if user accepts, add to artifact inventory
+				Artifact newArtifact = _gameControllerRef.rollNewArtifact(enemy, hero);
+				if (newArtifact != null)
+				{
+					System.out.println("You have found a new artifact!");
+					System.out.println(newArtifact.toString());
+					System.out.println("use 'artifacts list' to check");
+				}
+
 				return ;
 			}
 		}

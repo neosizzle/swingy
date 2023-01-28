@@ -65,6 +65,7 @@ public class GameView {
 	{
 		
 		boolean isRunning;
+		JFrame f_mainGame = new JFrame();;
 
 		isRunning = true;
 		if (!this._isGui)
@@ -92,27 +93,32 @@ public class GameView {
 					_consoleInstance.handleMove(line);
 				else if (line.startsWith("map"))
 					_consoleInstance.printMap();
+				else if (line.equals("switch"))
+					this._isGui = true;
 				else if (line.equals("exit"))
-					System.exit(0);
+					isRunning = false;
 				else 
 					System.out.println("Unknown command \""+line+"\"");
 			}
 			// gui game
 			else
 			{
-				try {
-					if (_isGui == true)
-					{
-						Thread.sleep(10);
-						System.out.println("GameView.gameStart() GUI");
+				f_mainGame = new JFrame();
+				f_mainGame.setBounds(0, 0, 1360, 768);
+				this._guiInstance.setGamestateRef(_gameState);
+				this._guiInstance.startGame(f_mainGame);
+				while (this._isGui) {
+					try {
+						Thread.sleep(500);
+					} catch (Exception e) {
 					}
-				} catch (Exception e) {
 				}
 			}
 		}
 
 		// close scanner
 		// sc.close();
+		f_mainGame.dispose();
 	}
 
 	public void start()
