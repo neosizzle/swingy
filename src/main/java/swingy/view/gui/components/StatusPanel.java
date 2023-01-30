@@ -1,7 +1,6 @@
 package swingy.view.gui.components;
 
 import java.awt.Color;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;

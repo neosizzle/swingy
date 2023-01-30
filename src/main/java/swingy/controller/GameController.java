@@ -147,7 +147,7 @@ public class GameController {
 		try {
 			// attempt to update game in db
 			Game newGame = model.moveDirection(game, direction, prevCoords);
-			
+		
 			// return newgame
 			return newGame;
 			
@@ -215,6 +215,7 @@ public class GameController {
 				// map expand
 				game.setWidth(game.getWidth() + 5);
 				game.setHeight(game.getHeight() + 5);
+				model.expandGame(game);
 
 				//upgrade enemies
 				for (Enemy _enemy : enemies) {

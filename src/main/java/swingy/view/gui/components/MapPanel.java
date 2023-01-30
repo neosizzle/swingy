@@ -28,6 +28,23 @@ public class MapPanel {
 	private Image _exploredPic;
 	private Image _wallPic;
 	private Image _unexploredPic;
+	private JLabel[][] _grid = new JLabel[40][40];
+	private Map _map;
+
+	private ImageIcon getIconFor(char entity)
+	{
+		if (entity == '=')
+			return (new ImageIcon(_wallPic));
+		if (entity == '#')
+			return (new ImageIcon(_unexploredPic));
+		if (entity == '-')
+			return (new ImageIcon(_exploredPic));
+		if (entity == 'E')
+			return (new ImageIcon(_enemyPic));
+		if (entity == 'P')
+			return (new ImageIcon(_heroPic));
+		return null;
+	}
 
 	public void destroy()
 	{
@@ -44,35 +61,17 @@ public class MapPanel {
 		final int ASSET_WIDTH = 30;
 		final int ASSET_HEIGHT = 20;
 
-		Map map = _gamestateRef.getMap();
-		Game game = _gamestateRef.getCurrGame();
+		Map map = _map;
 
 		for (int row = 0; row < 40; row++) {
 			for (int col = 0; col < 40; col++) {
 				char entity = map.getEntityAt(row, col);
 				JLabel picLabel;
 
-				picLabel = null;
-				if (entity == '=')
-					picLabel = new JLabel(new ImageIcon(_wallPic));
-				if (entity == '#')
-					picLabel = new JLabel(new ImageIcon(_unexploredPic));
-				if (entity == '-')
-					picLabel = new JLabel(new ImageIcon(_exploredPic));
-				if (entity == 'E')
-					picLabel = new JLabel(new ImageIcon(_enemyPic));
-				if (entity == 'P')
-					picLabel = new JLabel(new ImageIcon(_heroPic));
-				
-				if (picLabel != null)
-				{
-					picLabel.setBounds(col * ASSET_WIDTH, row * ASSET_HEIGHT, ASSET_WIDTH, ASSET_HEIGHT);
-					_contentPane.add(picLabel);
-				}
-				else
-				{
-					// System.out.println("null pic");
-				}
+				picLabel = new JLabel(getIconFor(entity));
+				picLabel.setBounds(col * ASSET_WIDTH, row * ASSET_HEIGHT, ASSET_WIDTH, ASSET_HEIGHT);
+				_grid[row][col] = picLabel;
+				_contentPane.add(picLabel);
 			}
 		}
 		_window.add(_contentPane);
@@ -81,8 +80,17 @@ public class MapPanel {
 	public void update(GameState gameState)
 	{
 		this._gamestateRef = gameState;
-		destroy();
-		create();
+		
+		Map newMap = _gamestateRef.getMap();
+		for (int row = 0; row < 40; row++) {
+			for (int col = 0; col < 40; col++) {
+				final char newEntity = newMap.getEntityAt(row, col);
+				if (_map.getEntityAt(row, col) == newEntity)
+					continue ;
+				_grid[row][col].setIcon(getIconFor(newEntity));
+			}
+		}
+		this._map = newMap;
 	}
 
 	public MapPanel(JFrame window, GameState gamestate)
@@ -90,6 +98,7 @@ public class MapPanel {
 		this._window = window;
 		this._gamestateRef = gamestate;
 		this._contentPane = new JPanel();
+		this._map = gamestate.getMap();
 
 		// load pictures
 		try {

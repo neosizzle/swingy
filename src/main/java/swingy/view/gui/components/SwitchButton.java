@@ -1,19 +1,12 @@
 package swingy.view.gui.components;
 
-import java.awt.Color;
-import java.util.Date;
-
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import swingy.interfaces.Command;
-import swingy.schema.Hero;
 import swingy.view.GameState;
 
 public class SwitchButton {
@@ -24,6 +17,11 @@ public class SwitchButton {
 	public void destroy()
 	{
 		_window.remove(_button);
+	}
+	
+	public void disable()
+	{
+		_button.setEnabled(false);
 	}
 
 	public void create()
@@ -36,6 +34,7 @@ public class SwitchButton {
 						_window.dispose();
 					}  
 				});
+		this._button = switchButton;
 		_window.add(switchButton);
 	}
 

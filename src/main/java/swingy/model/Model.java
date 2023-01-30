@@ -454,6 +454,13 @@ public class Model {
 		this._statement.executeUpdate(query);
 	}
 
+	// expand game by id
+	public void expandGame(Game game) throws SQLException
+	{
+		String query = "UPDATE GAMES SET width = " + game.getWidth() + ", height = " + game.getHeight() + " WHERE id = " + game.getId();
+
+		this._statement.executeUpdate(query);
+	}
 	/**
 	 * ENEMIES
 	 */
