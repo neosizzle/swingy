@@ -20,6 +20,7 @@ import swingy.interfaces.Command;
 import swingy.schema.Hero;
 import swingy.view.GameState;
 import swingy.view.gui.charSelect.CharSelectATM;
+import swingy.view.gui.components.ArtifactsPanel;
 import swingy.view.gui.components.ControlPanel;
 import swingy.view.gui.components.MapPanel;
 import swingy.view.gui.components.MessagePanel;
@@ -159,13 +160,20 @@ public class GuiInstance {
 		StatusPanel status = new StatusPanel(_f_mainGame, _gamestateRef);
 		status.create();
 
+		ArtifactsPanel artifactsPanel = new ArtifactsPanel(
+			f_maingame,
+			_gamestateRef,
+			_gameControllerRef,
+			status);
+		artifactsPanel.create();
+
 		MessagePanel msgPanel = new MessagePanel(f_maingame);
 		msgPanel.create();
 
 		SwitchButton switchbtn = new SwitchButton(_f_mainGame, _isGuiSwitch);
 		switchbtn.create();
 
-		MapPanel mapPanel = new MapPanel(_f_mainGame, _gamestateRef);
+		MapPanel mapPanel = new MapPanel(_f_mainGame, _gamestateRef, artifactsPanel);
 		mapPanel.create();
 
 		ControlPanel controlPanel = new ControlPanel(
@@ -175,8 +183,11 @@ public class GuiInstance {
 					mapPanel,
 					msgPanel,
 					switchbtn,
-					status);
+					status,
+					artifactsPanel);
 		controlPanel.create();
+
+		
 
 		_f_mainGame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		_f_mainGame.setSize(1360,768);  

@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 
 import java.awt.event.ActionListener;
-import java.nio.MappedByteBuffer;
 import java.util.Random;
 import java.awt.event.ActionEvent;	
 
@@ -31,6 +30,7 @@ public class ControlPanel {
 	private MessagePanel _msgPanel;
 	private StatusPanel _statPanel;
 	private SwitchButton _switchBtn;
+	private ArtifactsPanel _artifactsPanel;
 	private JButton _north;
 	private JButton _south;
 	private JButton _east;
@@ -117,6 +117,7 @@ public class ControlPanel {
 				_msgPanel.appendText("You have found a new artifact!\n");
 				_msgPanel.appendText(newArtifact.toString() + "\n");
 				_msgPanel.appendText("use 'artifacts list' to check\n");
+				_artifactsPanel.update();
 			}
 		}
 	}
@@ -129,6 +130,7 @@ public class ControlPanel {
 			_south.setEnabled(false);
 			_east.setEnabled(false);
 			_west.setEnabled(false);
+			_switchBtn.disable();
 
 			_fight.setEnabled(true);
 			_run.setEnabled(true);
@@ -139,6 +141,7 @@ public class ControlPanel {
 			_south.setEnabled(true);
 			_east.setEnabled(true);
 			_west.setEnabled(true);
+			_switchBtn.enable();
 
 			_fight.setEnabled(false);
 			_run.setEnabled(false);
@@ -266,7 +269,6 @@ public class ControlPanel {
 				});
 		this._west = west;
 
-		// TODO create fight/ run
 		JButton fight = new JButton("Fight");
 		fight.setBounds(50, 500, BTN_WIDTH + 50, BTN_HEIGHT);
 		fight.setEnabled(false);
@@ -330,7 +332,7 @@ public class ControlPanel {
 		_window.add(_contentPane);
 	}
 
-	public ControlPanel(JFrame window, GameState gamestate, GameController controller, MapPanel mapPanel, MessagePanel msgpanel, SwitchButton switchBtn, StatusPanel stat)
+	public ControlPanel(JFrame window, GameState gamestate, GameController controller, MapPanel mapPanel, MessagePanel msgpanel, SwitchButton switchBtn, StatusPanel stat, ArtifactsPanel artifactsPanel)
 	{
 		this._window = window;
 		this._gameControllerRef = controller;
@@ -340,5 +342,6 @@ public class ControlPanel {
 		this._msgPanel = msgpanel;
 		this._switchBtn = switchBtn;
 		this._statPanel = stat;
+		this._artifactsPanel = artifactsPanel;
 	}
 }

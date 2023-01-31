@@ -24,6 +24,11 @@ public class SwitchButton {
 		_button.setEnabled(false);
 	}
 
+	public void enable()
+	{
+		_button.setEnabled(true);
+	}
+
 	public void create()
 	{
 		JButton switchButton=new JButton("Switch to console");

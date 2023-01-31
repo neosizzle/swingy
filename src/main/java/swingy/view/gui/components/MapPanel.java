@@ -9,11 +9,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import swingy.schema.Game;
 import swingy.view.GameState;
 import swingy.view.Map;
 
@@ -93,7 +91,7 @@ public class MapPanel {
 		this._map = newMap;
 	}
 
-	public MapPanel(JFrame window, GameState gamestate)
+	public MapPanel(JFrame window, GameState gamestate, ArtifactsPanel artifactsPanel)
 	{
 		this._window = window;
 		this._gamestateRef = gamestate;

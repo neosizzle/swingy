@@ -34,16 +34,12 @@ public class App {
          System.exit(1);
       }
 
-      Artifact a = new Artifact("artfactname", ArtifactQuality.HARD, ArtifactType.ARMOR, 69, false, 1);
-      Artifact a2 = new Artifact("artfactname1", ArtifactQuality.HARD, ArtifactType.ARMOR, 69, false, 1);
-
       Model m = new Model();
       Hero newHero = new Hero("init1", ClassName.JUNGKOOK);
       newHero.setId(m.addHero(newHero));
       m.addHero(new Hero("init2", ClassName.JIMIN));
       m.addHero(new Hero("init3", ClassName.JHOPE));
-      int aid = m.addArtifact(a);
-      int aid2 = m.addArtifact(a2);
+
 
       GameController controller = new GameController(m);
       GameView view = new GameView(controller, args[0]);

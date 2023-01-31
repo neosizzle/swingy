@@ -36,11 +36,22 @@ public class GameController {
 		return model.getAllHeros();
 	}
 
-	
+	// get hero by id
+	public Hero getHeroById(int id)
+	{
+		return model.getHeroById(id);
+	}
+
 	// handles getting artifacts
 	public ArrayList<Artifact> getArtifactsByHero(int heroId) 
 	{
 		ArrayList<Artifact> res = model.getAllArtifactsByHeroId(heroId);
+		return res;
+	}
+
+	public ArrayList<Artifact> getArtifactsByHeroAndType (int heroId, ArtifactType type)
+	{
+		ArrayList<Artifact> res = model.getAllArtifactsByHeroIdType(heroId, type);
 		return res;
 	}
 
@@ -85,7 +96,7 @@ public class GameController {
 			type = ArtifactType.HELM;
 		if (typeRandomSeed == 1)
 			type = ArtifactType.WEAPON;
-		
+
 		Artifact newArtifact = new Artifact("some artifact name", quality, type, attr, false, hero.getId());
 		int id = model.addArtifact(newArtifact);
 		newArtifact.setId(id);

@@ -335,6 +335,60 @@ public class Model {
 		this._statement.executeUpdate(query);
 	}
 
+	public Hero getHeroById(int _id)
+	{
+		Hero res;
+
+		res = null;
+		String query = "SELECT * FROM HEROES WHERE ID = " + _id;
+
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+
+			if (rs.next()) {
+				// get all the sutff
+				int	id = rs.getInt("id");
+				String name = rs.getString("name");
+				String _className = rs.getString("class");
+				int level = rs.getInt("level");
+				int exp = rs.getInt("exp");
+				int atk = rs.getInt("atk");
+				int def = rs.getInt("def");
+				int hp = rs.getInt("hp");
+				int maxExp = rs.getInt("maxExp");
+				int maxHp = rs.getInt("maxHp");
+
+				ClassName className;
+				if (_className.equals("JIMIN"))
+					className = ClassName.JIMIN;
+				else if (_className.equals("JUNGKOOK"))
+					className = ClassName.JUNGKOOK;
+				else if (_className.equals("VI"))
+					className = ClassName.VI;
+				else if (_className.equals("JHOPE"))
+					className = ClassName.JHOPE;
+				else if (_className.equals("TAEYUNG"))
+					className = ClassName.TAEYUNG;
+				else
+					className = ClassName.KIM_JUNG_UN;
+
+				// create new hero object
+				Hero newHero = new Hero(name, className, level, exp, maxExp, atk, def, hp, maxHp);
+				newHero.setId(id);
+
+				// append to res
+				res = newHero;
+			}
+		} catch (Exception e) {
+			System.out.print("Error getting heroes");
+			System.out.println(e);
+			System.exit(1);
+		}
+
+
+		return res;
+	}
+
 	/**
 	 * GAME
 	 */
@@ -532,9 +586,9 @@ public class Model {
 		int levelToAdd = new Random().nextInt(3 - 0) + 1;
 
 		enemy.setLevel(enemy.getLevel() + levelToAdd);
-		enemy.setDef(enemy.getDef() * (int)(1.5 * levelToAdd));
-		enemy.setAtk(enemy.getAtk() * (int)(1.5 * levelToAdd));
-		enemy.setMaxHp(enemy.getMaxHp() * (int)(1.5 * levelToAdd));
+		enemy.setDef(enemy.getDef() + (int)(1.5 * levelToAdd));
+		enemy.setAtk(enemy.getAtk() + (int)(1.5 * levelToAdd));
+		enemy.setMaxHp(enemy.getMaxHp() + (int)(1.5 * levelToAdd));
 		enemy.setHp(enemy.getMaxHp());
 
 		String query = "UPDATE ENEMIES SET level = " + enemy.getLevel() + 
@@ -690,7 +744,30 @@ public class Model {
 				res.add(artifact);
 			}
 		} catch (Exception e) {
-			System.out.print("Error getting heroes");
+			System.out.print("Error getting artifacts");
+			System.out.println(e);
+			System.exit(1);
+		}
+
+		return res;
+	}
+
+	// get alll artifacts owned by heroId and type
+	public ArrayList<Artifact> getAllArtifactsByHeroIdType(int heroId, ArtifactType type)
+	{
+		ArrayList<Artifact> res = new ArrayList<Artifact>();
+		String query = "SELECT * FROM ARTIFACTS WHERE ownedBy = " + heroId + " AND type = \"" + type.name() + "\"";
+
+		try {
+			ResultSet rs = this._statement.executeQuery(query);
+
+			while (rs.next()) {
+				Artifact artifact = _getArtifactFromRs(rs);
+				// append to res
+				res.add(artifact);
+			}
+		} catch (Exception e) {
+			System.out.println("Error getting artifacts");
 			System.out.println(e);
 			System.exit(1);
 		}
@@ -778,7 +855,7 @@ public class Model {
 
 			// check that artifact is owned by hero and not equipped
 			if (artifact.getIsEquipped() || (artifact.getOwnedBy() != hero.getId()))
-				throw new Exception("Artifact is not equippable");
+				return ;
 
 			// if hero already has artifact of same type equipped, unequip said artifact
 			String artifactEquippedQuery = "SELECT * FROM ARTIFACTS WHERE ownedBy = " + hero.getId() + " AND isEquipped = true AND type = \"" + artifact.getType().name() + "\""; 

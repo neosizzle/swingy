@@ -48,7 +48,7 @@ public class Artifact extends Schema{
 
 	public String toString()
 	{
-		return this.quality.name() + " " + this.name + "[" + this.type.name() + "]";
+		return this.getId() + " - " + this.quality + " " + this.name + " - " + this.type.name() + " + " + this.attr;
 	}
 	/** Getter and setter */
 	public String getName() {
