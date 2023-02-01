@@ -12,7 +12,6 @@ import swingy.schema.Artifact;
 import swingy.schema.Enemy;
 import swingy.schema.Game;
 import swingy.schema.Hero;
-import swingy.view.Map;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -497,6 +496,23 @@ public class Model {
 		exploredVariable = "explored = \"" + game.getExplored() + prevCoord.toString() + ";\"";
 
 		query = "UPDATE GAMES SET " + directionVariable + ", " + exploredVariable + " WHERE id = " + game.getId();
+		this._statement.executeUpdate(query);
+		res = getGameByHeroId(game.getHeroId());
+		return res;
+	}
+
+	// handles explore but not move
+	public Game exploreDirection(Game game, String direction, Coordinate prevCoord) throws SQLException
+	{
+		String query;
+		String exploredVariable;
+		Game res;
+
+		res = null;
+
+		exploredVariable = "explored = \"" + game.getExplored() + prevCoord.toString() + ";\"";
+
+		query = "UPDATE GAMES SET " +  exploredVariable + " WHERE id = " + game.getId();
 		this._statement.executeUpdate(query);
 		res = getGameByHeroId(game.getHeroId());
 		return res;

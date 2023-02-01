@@ -168,7 +168,7 @@ public class ControlPanel {
 
 		// get desired space entity
 		char desiredEntity;
-		desiredEntity = _gamestateRef.getMap().getEntityAt(desiredCoord.row, desiredCoord.col);
+		desiredEntity = _gamestateRef.getMap().getEntityAt(desiredCoord.row, desiredCoord.col, true);
 
 		// if its a wall or null, update game and map, u win
 		if (desiredEntity == '=' || desiredEntity == 0)
@@ -195,6 +195,22 @@ public class ControlPanel {
 		// if its enemy, fight or run and lock movements
 		if (desiredEntity == 'E')
 		{
+			// append explored
+			// update game and map
+			Game newGame = _gameControllerRef.handleExplore(
+				_gamestateRef.getCurrGame(),
+				direction,
+				desiredCoord
+				);
+			if (newGame != null)
+			{
+				_gamestateRef.setCurrGame(newGame);
+				_gamestateRef.setMap(new Map(newGame, _gamestateRef.getEnemies()));
+				// update map panel
+				_mapPanel.update(_gamestateRef);
+			}
+
+
 			// in combat
 			_setButtons(true);
 			_msgPanel.appendText("You have touched an enemy without consent. \nYou may choose to fight or run.\n\n");

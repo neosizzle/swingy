@@ -115,11 +115,6 @@ public class ConsoleInstance {
 		}
 	}
 
-	public void test()
-	{
-		System.out.println(this._gamestateRef.getMap().toString());
-	}
-
 	public void artifactEquipId(int artifactId)
 	{
 		try {
@@ -179,7 +174,7 @@ public class ConsoleInstance {
 
 		// get desired space entity
 		char desiredEntity;
-		desiredEntity = _gamestateRef.getMap().getEntityAt(desiredCoord.row, desiredCoord.col);
+		desiredEntity = _gamestateRef.getMap().getEntityAt(desiredCoord.row, desiredCoord.col, true);
 
 
 		// if its a wall or null, update game and map, u win
@@ -209,6 +204,20 @@ public class ConsoleInstance {
 			System.out.println("You have touched an enemy without consent. \nType N to run, any other key to fight.");
 			String line = sc.nextLine();
 			Random random = new Random();
+
+			// append explored
+			// update game and map
+			Game newGame = _gameControllerRef.handleExplore(
+				_gamestateRef.getCurrGame(),
+				direction,
+				desiredCoord
+				);
+			if (newGame != null)
+			{
+				_gamestateRef.setCurrGame(newGame);
+				_gamestateRef.setMap(new Map(newGame, _gamestateRef.getEnemies()));
+			}
+
 
 			// if run, return.
 			if (line.startsWith("N"))

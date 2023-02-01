@@ -63,7 +63,7 @@ public class MapPanel {
 
 		for (int row = 0; row < 40; row++) {
 			for (int col = 0; col < 40; col++) {
-				char entity = map.getEntityAt(row, col);
+				char entity = map.getEntityAt(row, col, false);
 				JLabel picLabel;
 
 				picLabel = new JLabel(getIconFor(entity));
@@ -82,8 +82,8 @@ public class MapPanel {
 		Map newMap = _gamestateRef.getMap();
 		for (int row = 0; row < 40; row++) {
 			for (int col = 0; col < 40; col++) {
-				final char newEntity = newMap.getEntityAt(row, col);
-				if (_map.getEntityAt(row, col) == newEntity)
+				final char newEntity = newMap.getEntityAt(row, col, false);
+				if (_map.getEntityAt(row, col, false) == newEntity)
 					continue ;
 				_grid[row][col].setIcon(getIconFor(newEntity));
 			}

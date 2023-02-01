@@ -20,7 +20,6 @@ import swingy.schema.Artifact;
 import swingy.schema.Enemy;
 import swingy.schema.Game;
 import swingy.schema.Hero;
-import swingy.view.Map;
 
 public class GameController {
 	Model model;
@@ -97,7 +96,7 @@ public class GameController {
 		if (typeRandomSeed == 1)
 			type = ArtifactType.WEAPON;
 
-		Artifact newArtifact = new Artifact("some artifact name", quality, type, attr, false, hero.getId());
+		Artifact newArtifact = new Artifact(quality, type, attr, false, hero.getId());
 		int id = model.addArtifact(newArtifact);
 		newArtifact.setId(id);
 		return newArtifact;
@@ -118,7 +117,7 @@ public class GameController {
 				// spawn position
 				if (x == game.getPosCol() && y == game.getPosRow()) continue;
 
-				Enemy newEnemy = new Enemy("someenemy", 20, 5, 5, 20, game.getId(),x, y, 1);
+				Enemy newEnemy = new Enemy(game.getId(), x, y);
 
 				// check if position is occupied
 				if (model.getEnemyFromGameIdAndPos(game.getId(), x, y) != null)
@@ -165,6 +164,23 @@ public class GameController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Move error");
+			return null;
+		}
+	}
+
+	// handle explore and generates new map
+	public Game handleExplore(Game game, String direction, Coordinate prevCoords)
+	{
+		try {
+			// attempt to update game in db
+			Game newGame = model.exploreDirection(game, direction, prevCoords);
+		
+			// return newgame
+			return newGame;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Explore error");
 			return null;
 		}
 	}

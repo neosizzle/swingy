@@ -15,6 +15,7 @@ public class Map {
 	private ArrayList<Coordinate> _enemiesPos;
 	private ArrayList<Coordinate> _exploredPos;
 	private ArrayList<String> _entities;
+	// private ArrayList<String> _visualEntities;
 	private final Coordinate MAP_BORDERS = new Coordinate(40, 40);
 	private final Coordinate MAP_CENTER = new Coordinate(20, 20);
 
@@ -46,22 +47,22 @@ public class Map {
 					res += "P";
 					continue;
 				}
-				if (_findCoordinateWithPositions(_enemiesPos, row, col) != null)
-				{
-					res += "E";
-					continue ;
-				}
+				// if (_findCoordinateWithPositions(_enemiesPos, row, col) != null)
+				// {
+				// 	res += "E";
+				// 	continue ;
+				// }
 				if (
 					(row >= _topLeftCorner.row && row < _btmLeftCorner.row) &&
 					(col >= _topLeftCorner.col && col < _topRightCorner.col))
 				{
 					if (_findCoordinateWithPositions(_exploredPos, row, col) != null)
 					{
-						// if (_findCoordinateWithPositions(_enemiesPos, row, col) != null)
-						// {
-						// 	res += "E";
-						// 	continue ;
-						// }
+						if (_findCoordinateWithPositions(_enemiesPos, row, col) != null)
+						{
+							res += "E";
+							continue ;
+						}
 						res += "-";
 						continue;
 					}
@@ -75,17 +76,28 @@ public class Map {
 		return res;
 	}
 
-	public char getEntityAt(int row, int col)
+	public char getEntityAt(int row, int col, boolean showHiddenEnemies)
 	{
 		if (row >= MAP_BORDERS.row || col >= MAP_BORDERS.col || row < 0 || col < 0)
 			return 0;
 		// check for hidden enemies
-		if (_findCoordinateWithPositions(_enemiesPos, row, col) != null)
+		if (_findCoordinateWithPositions(_enemiesPos, row, col) != null && showHiddenEnemies)
 			return 'E';
 		return this._entities.get(row).charAt(col);
 	}
 
 	private ArrayList<String> _extractEntities(String str)
+	{
+		ArrayList<String> res = new ArrayList<String> ();
+		String[] rows = str.split("\n", 0);
+
+		for (String row : rows) {
+			res.add(row);
+		}
+		return res;
+	}
+
+	private ArrayList<String> _extractVisualEntities(String str)
 	{
 		ArrayList<String> res = new ArrayList<String> ();
 		String[] rows = str.split("\n", 0);

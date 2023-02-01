@@ -1,7 +1,11 @@
 package swingy.schema;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import swingy.enums.ArtifactQuality;
 import swingy.enums.ArtifactType;
@@ -95,6 +99,34 @@ public class Artifact extends Schema{
 	}
 
 	/**Constructor */
+	public Artifact( ArtifactQuality artifactQuality, ArtifactType artifactType, int attr, boolean isEquipped, int ownedBy)
+	{
+		this.id = -1;
+		this.quality = artifactQuality;
+		this.type = artifactType;
+		this.attr = attr;
+		this.isEquipped = isEquipped;
+		this.ownedBy = ownedBy;
+		this.fn_map = generateFnMap();
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/main/java/swingy/assets/text/artifactnames.txt"));
+			String line = reader.readLine();
+			ArrayList<String> names = new ArrayList<String>();
+
+			while (line != null) {
+				names.add(line);
+				line = reader.readLine();
+			}
+
+			reader.close();
+			this.name = names.get(new Random().nextInt(names.size()));
+		} catch (Exception e) {
+			this.name = "some artifact";
+			e.printStackTrace();
+		}
+	}
+
 	public Artifact(String nameString, ArtifactQuality artifactQuality, ArtifactType artifactType, int attr, boolean isEquipped, int ownedBy)
 	{
 		this.id = -1;

@@ -1,5 +1,10 @@
 package swingy.schema;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Enemy extends Schema {
 	private	int	id;
 	private String name;
@@ -80,6 +85,38 @@ public class Enemy extends Schema {
 	}
 
 	/**Constructor */
+	public Enemy(int gameId, int posX, int posY)
+	{
+		this.gameId = gameId;
+		this.posX = posX;
+		this.posY = posY;
+		this.level = 1;
+		this.id = -1;
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/main/java/swingy/assets/text/enemynames.txt"));
+			String line = reader.readLine();
+			ArrayList<String> names = new ArrayList<String>();
+
+			while (line != null) {
+				names.add(line);
+				line = reader.readLine();
+			}
+
+			reader.close();
+			this.name = names.get(new Random().nextInt(names.size()));
+		} catch (Exception e) {
+			this.name = "some enemy";
+			e.printStackTrace();
+		}
+
+		this.maxHp = new Random().nextInt(20) + 10;
+		this.atk = new Random().nextInt(10) + 1;
+		this.def = new Random().nextInt(10) + 1;
+		this.hp = maxHp;
+	}
+	
+
 	public Enemy(String name, int hp, int def, int atk, int maxHp, int gameId, int posX, int posY, int level)
 	{
 		this.id = -1;
