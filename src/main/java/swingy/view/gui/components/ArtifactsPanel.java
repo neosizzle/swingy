@@ -27,6 +27,7 @@ public class ArtifactsPanel {
 	private GameController _gamecontrollerref;
 	private JPanel _contentPane;
 	private StatusPanel _statPanel;
+	private MessagePanel _msgPanel;
 	private JComboBox<String> _helmCombo;
 	private JComboBox<String> _weaponCombo;
 	private JComboBox<String> _armourCombo;
@@ -122,6 +123,10 @@ public class ArtifactsPanel {
 
 			// update hero stat
 			_statPanel.update(_gamestateref);
+
+			// notify user
+			System.out.println("ArtifactsPanel._performChanges()");
+			_msgPanel.appendText("Changes saved \n");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -229,6 +234,7 @@ public class ArtifactsPanel {
 
 		// set default selected
 		helmCombo.setSelectedItem(_findEquippedString(helmArtifcatsList));
+		helmCombo.setFocusable(false);
 		this._helmCombo = helmCombo;
 
 		// armour
@@ -244,6 +250,7 @@ public class ArtifactsPanel {
 
 		// set default selected
 		armorCombo.setSelectedItem(_findEquippedString(armourArtifactsList));
+		armorCombo.setFocusable(false);
 		this._armourCombo = armorCombo;
 
 		// weapn
@@ -259,6 +266,7 @@ public class ArtifactsPanel {
 
 		// set default selected
 		weaponCombo.setSelectedItem(_findEquippedString(weaponArtifactList));
+		weaponCombo.setFocusable(false);
 
 		this._weaponCombo = weaponCombo;
 
@@ -270,6 +278,7 @@ public class ArtifactsPanel {
 						_performChanges();
 					}  
 				});
+		saveBtn.setFocusable(false);
 
 		_contentPane.add(helmLabel);
 		_contentPane.add(helmCombo);
@@ -283,12 +292,13 @@ public class ArtifactsPanel {
 		_window.add(_contentPane);
 	}
 
-	public ArtifactsPanel(JFrame window, GameState gameState, GameController gameController, StatusPanel statpanel)
+	public ArtifactsPanel(JFrame window, GameState gameState, GameController gameController, StatusPanel statpanel, MessagePanel messagePanel)
 	{
 		this._window = window;
 		this._gamestateref = gameState;
 		this._contentPane = new JPanel();
 		this._gamecontrollerref = gameController;
 		this._statPanel = statpanel;
+		this._msgPanel = messagePanel;
 	}
 }

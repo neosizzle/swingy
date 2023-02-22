@@ -9,8 +9,10 @@ import javax.swing.JPanel;
 
 
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.util.Random;
-import java.awt.event.ActionEvent;	
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;	
 
 import swingy.controller.GameController;
 import swingy.interfaces.Coordinate;
@@ -31,13 +33,10 @@ public class ControlPanel {
 	private StatusPanel _statPanel;
 	private SwitchButton _switchBtn;
 	private ArtifactsPanel _artifactsPanel;
-	private JButton _north;
-	private JButton _south;
-	private JButton _east;
-	private JButton _west;
 	private JButton _fight;
 	private JButton _run;
 	private Coordinate _desiredCoord;
+	private boolean _inCombat = false;
 	private final int PANE_WIDTH = 200;
 	private final int PANE_HEIGHT = 800;
 
@@ -110,13 +109,16 @@ public class ControlPanel {
 			_mapPanel.update(_gamestateRef);
 			_statPanel.update(_gamestateRef);
 
+			// reset event listeners for window
+			_window.requestFocusInWindow();
+
 			// roll for artifact
 			Artifact newArtifact = _gameControllerRef.rollNewArtifact(enemy, hero);
 			if (newArtifact != null)
 			{
 				_msgPanel.appendText("You have found a new artifact!\n");
 				_msgPanel.appendText(newArtifact.toString() + "\n");
-				_msgPanel.appendText("use 'artifacts list' to check\n");
+				_msgPanel.appendText("you can check at the artifacts panel\n");
 				_artifactsPanel.update();
 			}
 		}
@@ -126,10 +128,7 @@ public class ControlPanel {
 	{
 		if (combatmode)
 		{
-			_north.setEnabled(false);
-			_south.setEnabled(false);
-			_east.setEnabled(false);
-			_west.setEnabled(false);
+			_inCombat = true;
 			_switchBtn.disable();
 
 			_fight.setEnabled(true);
@@ -137,10 +136,7 @@ public class ControlPanel {
 		}
 		else
 		{
-			_north.setEnabled(true);
-			_south.setEnabled(true);
-			_east.setEnabled(true);
-			_west.setEnabled(true);
+			_inCombat = false;
 			_switchBtn.enable();
 
 			_fight.setEnabled(false);
@@ -176,11 +172,11 @@ public class ControlPanel {
 			// update message
 			_msgPanel.appendText("\n\n\n you win gg \n\n\n");
 
-			// disable all buttons
-			_north.setEnabled(false);
-			_south.setEnabled(false);
-			_east.setEnabled(false);
-			_west.setEnabled(false);
+			// disable all buttons and key listeners
+			KeyListener listener[] = _window.getKeyListeners();
+			for (KeyListener keyListener : listener) {
+				_window.removeKeyListener(keyListener);
+			}
 			_switchBtn.disable();
 
 
@@ -189,7 +185,6 @@ public class ControlPanel {
 				_gamestateRef.getCurrHero()
 				);
 			return ;
-			// System.exit(0);
 		}
 
 		// if its enemy, fight or run and lock movements
@@ -248,42 +243,30 @@ public class ControlPanel {
 		_contentPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		_contentPane.setLayout(null);
 
-		// TODO create control
-		JButton north = new JButton("N");
-		north.setBounds(75, 300, BTN_WIDTH, BTN_HEIGHT);
-		north.addActionListener(new ActionListener(){  
-			public void actionPerformed(ActionEvent e){ 
-						_handleMove("N");
-					}  
-				});
-		this._north = north;
+		_window.addKeyListener(new KeyListener() {
 
-		JButton south = new JButton("S");
-		south.setBounds(75, 400, BTN_WIDTH, BTN_HEIGHT);
-		south.addActionListener(new ActionListener(){  
-			public void actionPerformed(ActionEvent e){  
-						_handleMove("S");
-					}  
-				});
-		this._south = south;
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (_inCombat) return;
+				if (arg0.getKeyCode() == KeyEvent.VK_W)
+					_handleMove("N");
+				else if (arg0.getKeyCode() == KeyEvent.VK_A)
+					_handleMove("W");
+				else if (arg0.getKeyCode() == KeyEvent.VK_S)
+					_handleMove("S");
+				else if (arg0.getKeyCode() == KeyEvent.VK_D)
+					_handleMove("E");
+			}
 
-		JButton east = new JButton("E");
-		east.setBounds(125, 350, BTN_WIDTH, BTN_HEIGHT);
-		east.addActionListener(new ActionListener(){  
-			public void actionPerformed(ActionEvent e){  
-						_handleMove("E");
-					}  
-				});
-		this._east = east;
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+			}
 
-		JButton west = new JButton("W");
-		west.setBounds(25, 350, BTN_WIDTH, BTN_HEIGHT);
-		west.addActionListener(new ActionListener(){  
-			public void actionPerformed(ActionEvent e){  
-						_handleMove("W");
-					}  
-				});
-		this._west = west;
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+			}
+			
+		});
 
 		JButton fight = new JButton("Fight");
 		fight.setBounds(50, 500, BTN_WIDTH + 50, BTN_HEIGHT);
@@ -339,10 +322,10 @@ public class ControlPanel {
 				});
 		this._run = run;
 
-		_contentPane.add(north);
-		_contentPane.add(south);
-		_contentPane.add(east);
-		_contentPane.add(west);
+		// set buttons unfocusable so window always remains focus
+		run.setFocusable(false);
+		fight.setFocusable(false);
+
 		_contentPane.add(run);
 		_contentPane.add(fight);
 		_window.add(_contentPane);

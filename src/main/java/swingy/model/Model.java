@@ -232,7 +232,6 @@ public class Model {
 			Hero newHero = _getHeroFromResultSet(rs);
 			return newHero;
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 		return null;
 	}
@@ -602,9 +601,9 @@ public class Model {
 		int levelToAdd = new Random().nextInt(3 - 0) + 1;
 
 		enemy.setLevel(enemy.getLevel() + levelToAdd);
-		enemy.setDef(enemy.getDef() + (int)(1.5 * levelToAdd));
-		enemy.setAtk(enemy.getAtk() + (int)(1.5 * levelToAdd));
-		enemy.setMaxHp(enemy.getMaxHp() + (int)(1.5 * levelToAdd));
+		enemy.setDef(enemy.getDef() + (int)(2 * levelToAdd));
+		enemy.setAtk(enemy.getAtk() + (int)(2 * levelToAdd));
+		enemy.setMaxHp(enemy.getMaxHp() + (int)(2 * levelToAdd));
 		enemy.setHp(enemy.getMaxHp());
 
 		String query = "UPDATE ENEMIES SET level = " + enemy.getLevel() + 

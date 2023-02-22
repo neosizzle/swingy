@@ -8,6 +8,7 @@ import swingy.controller.GameController;
 import swingy.model.Model;
 import swingy.view.GameView;
 
+// TODO Better feedback for guimode
 public class App {
 
    public static void main( String args[] ) {

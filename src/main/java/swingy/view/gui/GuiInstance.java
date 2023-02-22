@@ -160,15 +160,17 @@ public class GuiInstance {
 		StatusPanel status = new StatusPanel(_f_mainGame, _gamestateRef);
 		status.create();
 
+		MessagePanel msgPanel = new MessagePanel(f_maingame);
+		msgPanel.create();
+
 		ArtifactsPanel artifactsPanel = new ArtifactsPanel(
 			f_maingame,
 			_gamestateRef,
 			_gameControllerRef,
-			status);
+			status,
+			msgPanel
+			);
 		artifactsPanel.create();
-
-		MessagePanel msgPanel = new MessagePanel(f_maingame);
-		msgPanel.create();
 
 		SwitchButton switchbtn = new SwitchButton(_f_mainGame, _isGuiSwitch);
 		switchbtn.create();
@@ -193,6 +195,7 @@ public class GuiInstance {
 		_f_mainGame.setSize(1360,768);  
 		_f_mainGame.setLayout(null);//using no layout managers  
 		_f_mainGame.setVisible(true);//making the frame visible
+		_f_mainGame.setFocusable(true);
 	}
 
 	public GuiInstance(Command<Number> isGuiSwitch, GameController gameControllerRef, GameState gameStateRef)

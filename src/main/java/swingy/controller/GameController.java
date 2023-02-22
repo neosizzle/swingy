@@ -252,7 +252,8 @@ public class GameController {
 			}
 
 			// no lv up, update exp and hp
-			hero.setExp(expGain + hero.getExp());
+			if (hero.getLevel() < 7)
+				hero.setExp(expGain + hero.getExp());
 			model.updateHeroHp(hero);
 			model.updateHeroExp(hero);
 
