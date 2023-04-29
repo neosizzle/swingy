@@ -125,7 +125,6 @@ public class ArtifactsPanel {
 			_statPanel.update(_gamestateref);
 
 			// notify user
-			System.out.println("ArtifactsPanel._performChanges()");
 			_msgPanel.appendText("Changes saved \n");
 		} catch (Exception e) {
 			e.printStackTrace();

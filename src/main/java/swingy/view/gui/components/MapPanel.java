@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.io.File;
-import java.io.IOException;
 
 import swingy.view.GameState;
 import swingy.view.Map;

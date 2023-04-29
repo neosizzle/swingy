@@ -40,6 +40,7 @@ public class ControlPanel {
 	private final int PANE_WIDTH = 200;
 	private final int PANE_HEIGHT = 800;
 
+	// initiate combat sequence
 	private void _initCombat(Coordinate desiredCoord)
 	{
 		_msgPanel.appendText("You chose violence.\n");
@@ -89,6 +90,7 @@ public class ControlPanel {
 		}
 		else
 		{
+			// winning state
 			_msgPanel.appendText("u win\n");
 
 			// if win, remove enemy from db and gamestate
@@ -124,6 +126,7 @@ public class ControlPanel {
 		}
 	}
 
+	// reset buttons based on combatstate
 	private void _setButtons(boolean combatmode)
 	{
 		if (combatmode)
@@ -144,6 +147,7 @@ public class ControlPanel {
 		}
 	}
 
+	// handle movement action 
 	private void _handleMove(String direction)
 	{
 		// save current coords

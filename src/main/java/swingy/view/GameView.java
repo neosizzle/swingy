@@ -6,7 +6,6 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 import swingy.controller.GameController;
 import swingy.interfaces.Command;
-import swingy.schema.Hero;
 import swingy.view.console.ConsoleInstance;
 import swingy.view.gui.GuiInstance;
 
