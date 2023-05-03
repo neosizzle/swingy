@@ -86,7 +86,7 @@ public class GuiInstance {
 		final JLabel nameLabel = new JLabel("Name:");
 		nameLabel.setBounds(700, 50, 50, 50);
 
-		final JTextField nameInput = new JTextField("sexmaster1234");
+		final JTextField nameInput = new JTextField("longbanana");
 		nameInput.setBounds(750, 50, 300, 50);
 
 		f_charSelect.add(nameInput);
